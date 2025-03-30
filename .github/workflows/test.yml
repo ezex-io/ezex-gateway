@@ -1,4 +1,4 @@
-name: Testing (Go)
+name: Testing
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  linting:
+  testing:
     runs-on: ubuntu-latest
 
     steps:

@@ -11,7 +11,7 @@ type Config struct {
 var DefaultConfig = &Config{
 	ConfirmationCodeTTL:      5 * time.Minute,
 	ConfirmationTemplateName: "confirmation_letter",
-	ConfirmationCodeSubject:  "ezeX confirmation code",
+	ConfirmationCodeSubject:  "ezeX Confirmation Code: %s",
 }
 
 func (*Config) BasicCheck() error {

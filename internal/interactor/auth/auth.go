@@ -40,7 +40,7 @@ func (a *Auth) SendConfirmationCode(ctx context.Context, recipient string, metho
 	switch method {
 	case gen.DeliveryMethodEmail:
 		if err := a.notificationPort.SendEmail(ctx, recipient,
-			a.cfg.ConfirmationCodeSubject,
+			fmt.Sprintf(a.cfg.ConfirmationCodeSubject, code),
 			a.cfg.ConfirmationTemplateName,
 			map[string]string{
 				"Code": code,

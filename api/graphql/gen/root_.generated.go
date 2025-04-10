@@ -53,7 +53,8 @@ type ComplexityRoot struct {
 	}
 
 	SecurityImagePayload struct {
-		Image func(childComplexity int) int
+		Image  func(childComplexity int) int
+		Phrase func(childComplexity int) int
 	}
 
 	VoidPayload struct {
@@ -141,6 +142,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SecurityImagePayload.Image(childComplexity), true
+
+	case "SecurityImagePayload.phrase":
+		if e.complexity.SecurityImagePayload.Phrase == nil {
+			break
+		}
+
+		return e.complexity.SecurityImagePayload.Phrase(childComplexity), true
 
 	case "VoidPayload.ok":
 		if e.complexity.VoidPayload.Ok == nil {
@@ -286,6 +294,7 @@ input SecurityImageInput {
 
 type SecurityImagePayload {
   image: String!
+  phrase: String!
 }
 
 input ProcessFirebaseAuthInput {

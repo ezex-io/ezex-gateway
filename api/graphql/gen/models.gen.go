@@ -23,7 +23,8 @@ type SecurityImageInput struct {
 }
 
 type SecurityImagePayload struct {
-	Image string `json:"image"`
+	Image  string `json:"image"`
+	Phrase string `json:"phrase"`
 }
 
 type SendConfirmationCodeInput struct {

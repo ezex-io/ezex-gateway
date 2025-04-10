@@ -26,6 +26,7 @@ input SecurityImageInput {
 
 type SecurityImagePayload {
   image: String!
+  phrase: String!
 }
 
 input ProcessFirebaseAuthInput {

@@ -32,7 +32,8 @@ func (*mutationResolver) SecurityImage(_ context.Context,
 	_ gen.SecurityImageInput,
 ) (*gen.SecurityImagePayload, error) {
 	return &gen.SecurityImagePayload{
-		Image: "mock.png",
+		Image:  "mock.png",
+		Phrase: "mock.phrase",
 	}, nil
 }
 

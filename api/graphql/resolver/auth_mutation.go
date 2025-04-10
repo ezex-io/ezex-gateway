@@ -28,14 +28,16 @@ func (m *mutationResolver) VerifyConfirmationCode(ctx context.Context,
 	return &gen.VoidPayload{}, nil
 }
 
-func (m *mutationResolver) SecurityImage(ctx context.Context,
-	input gen.SecurityImageInput) (*gen.SecurityImagePayload, error) {
+func (*mutationResolver) SecurityImage(_ context.Context,
+	_ gen.SecurityImageInput,
+) (*gen.SecurityImagePayload, error) {
 	return &gen.SecurityImagePayload{
 		Image: "mock.png",
 	}, nil
 }
 
-func (m *mutationResolver) ProcessFirebaseAuth(ctx context.Context,
-	input gen.ProcessFirebaseAuthInput) (*gen.VoidPayload, error) {
+func (*mutationResolver) ProcessFirebaseAuth(_ context.Context,
+	_ gen.ProcessFirebaseAuthInput,
+) (*gen.VoidPayload, error) {
 	return &gen.VoidPayload{}, nil
 }

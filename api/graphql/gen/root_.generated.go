@@ -42,12 +42,18 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
+		ProcessFirebaseAuth    func(childComplexity int, input ProcessFirebaseAuthInput) int
+		SecurityImage          func(childComplexity int, input SecurityImageInput) int
 		SendConfirmationCode   func(childComplexity int, input SendConfirmationCodeInput) int
 		VerifyConfirmationCode func(childComplexity int, input VerifyConfirmationCodeInput) int
 	}
 
 	Query struct {
 		Dummy func(childComplexity int) int
+	}
+
+	SecurityImagePayload struct {
+		Image func(childComplexity int) int
 	}
 
 	VoidPayload struct {
@@ -73,6 +79,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Mutation.processFirebaseAuth":
+		if e.complexity.Mutation.ProcessFirebaseAuth == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_processFirebaseAuth_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ProcessFirebaseAuth(childComplexity, args["input"].(ProcessFirebaseAuthInput)), true
+
+	case "Mutation.securityImage":
+		if e.complexity.Mutation.SecurityImage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_securityImage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SecurityImage(childComplexity, args["input"].(SecurityImageInput)), true
 
 	case "Mutation.sendConfirmationCode":
 		if e.complexity.Mutation.SendConfirmationCode == nil {
@@ -105,6 +135,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Dummy(childComplexity), true
 
+	case "SecurityImagePayload.image":
+		if e.complexity.SecurityImagePayload.Image == nil {
+			break
+		}
+
+		return e.complexity.SecurityImagePayload.Image(childComplexity), true
+
 	case "VoidPayload.ok":
 		if e.complexity.VoidPayload.Ok == nil {
 			break
@@ -120,6 +157,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputProcessFirebaseAuthInput,
+		ec.unmarshalInputSecurityImageInput,
 		ec.unmarshalInputSendConfirmationCodeInput,
 		ec.unmarshalInputVerifyConfirmationCodeInput,
 	)
@@ -241,6 +280,18 @@ input VerifyConfirmationCodeInput {
   code: String!
 }
 
+input SecurityImageInput {
+  email: String!
+}
+
+type SecurityImagePayload {
+  image: String!
+}
+
+input ProcessFirebaseAuthInput {
+  token: String!
+}
+
 # ─────────────────────────────
 # Query
 # ─────────────────────────────
@@ -256,6 +307,8 @@ type Query {
 extend type Mutation {
   sendConfirmationCode(input: SendConfirmationCodeInput!): VoidPayload!
   verifyConfirmationCode(input: VerifyConfirmationCodeInput!): VoidPayload!
+  securityImage(input: SecurityImageInput!):SecurityImagePayload!
+  processFirebaseAuth(input: ProcessFirebaseAuthInput!): VoidPayload!
 }
 `, BuiltIn: false},
 	{Name: "../schema/common.graphql", Input: `# ─────────────────────────────

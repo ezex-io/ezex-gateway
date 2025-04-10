@@ -11,7 +11,19 @@ import (
 type Mutation struct {
 }
 
+type ProcessFirebaseAuthInput struct {
+	Token string `json:"token"`
+}
+
 type Query struct {
+}
+
+type SecurityImageInput struct {
+	Email string `json:"email"`
+}
+
+type SecurityImagePayload struct {
+	Image string `json:"image"`
 }
 
 type SendConfirmationCodeInput struct {

@@ -12,6 +12,7 @@ require (
 	github.com/99designs/gqlgen v0.17.68
 	github.com/ezex-io/ezex-notification v0.0.0-20250327163537-03652af2e3ad
 	github.com/ezex-io/gopkg/errors v0.1.0
+	github.com/ezex-io/gopkg/logger v0.1.2
 	github.com/ezex-io/gopkg/middleware/http-mdl v0.1.0
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/stretchr/testify v1.10.0
@@ -64,7 +65,6 @@ require (
 	github.com/denis-tingaikin/go-header v0.5.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/ettle/strcase v0.2.0 // indirect
-	github.com/ezex-io/gopkg/logger v0.1.2 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/firefart/nonamedreturns v1.0.5 // indirect

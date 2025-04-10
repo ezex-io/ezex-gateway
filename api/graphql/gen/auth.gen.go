@@ -19,6 +19,8 @@ import (
 type MutationResolver interface {
 	SendConfirmationCode(ctx context.Context, input SendConfirmationCodeInput) (*VoidPayload, error)
 	VerifyConfirmationCode(ctx context.Context, input VerifyConfirmationCodeInput) (*VoidPayload, error)
+	SecurityImage(ctx context.Context, input SecurityImageInput) (*SecurityImagePayload, error)
+	ProcessFirebaseAuth(ctx context.Context, input ProcessFirebaseAuthInput) (*VoidPayload, error)
 }
 type QueryResolver interface {
 	Dummy(ctx context.Context) (*string, error)
@@ -27,6 +29,62 @@ type QueryResolver interface {
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_processFirebaseAuth_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_processFirebaseAuth_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_processFirebaseAuth_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (ProcessFirebaseAuthInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal ProcessFirebaseAuthInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNProcessFirebaseAuthInput2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐProcessFirebaseAuthInput(ctx, tmp)
+	}
+
+	var zeroVal ProcessFirebaseAuthInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_securityImage_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_securityImage_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_securityImage_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (SecurityImageInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal SecurityImageInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNSecurityImageInput2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐSecurityImageInput(ctx, tmp)
+	}
+
+	var zeroVal SecurityImageInput
+	return zeroVal, nil
+}
 
 func (ec *executionContext) field_Mutation_sendConfirmationCode_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
@@ -238,6 +296,124 @@ func (ec *executionContext) fieldContext_Mutation_verifyConfirmationCode(ctx con
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_securityImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_securityImage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().SecurityImage(rctx, fc.Args["input"].(SecurityImageInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*SecurityImagePayload)
+	fc.Result = res
+	return ec.marshalNSecurityImagePayload2ᚖgithubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐSecurityImagePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_securityImage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "image":
+				return ec.fieldContext_SecurityImagePayload_image(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SecurityImagePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_securityImage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_processFirebaseAuth(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_processFirebaseAuth(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ProcessFirebaseAuth(rctx, fc.Args["input"].(ProcessFirebaseAuthInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*VoidPayload)
+	fc.Result = res
+	return ec.marshalNVoidPayload2ᚖgithubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐVoidPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_processFirebaseAuth(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "ok":
+				return ec.fieldContext_VoidPayload_ok(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type VoidPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_processFirebaseAuth_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query__dummy(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query__dummy(ctx, field)
 	if err != nil {
@@ -410,9 +586,107 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _SecurityImagePayload_image(ctx context.Context, field graphql.CollectedField, obj *SecurityImagePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SecurityImagePayload_image(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SecurityImagePayload_image(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SecurityImagePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
+
+func (ec *executionContext) unmarshalInputProcessFirebaseAuthInput(ctx context.Context, obj any) (ProcessFirebaseAuthInput, error) {
+	var it ProcessFirebaseAuthInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"token"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "token":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Token = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSecurityImageInput(ctx context.Context, obj any) (SecurityImageInput, error) {
+	var it SecurityImageInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"email"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		}
+	}
+
+	return it, nil
+}
 
 func (ec *executionContext) unmarshalInputSendConfirmationCodeInput(ctx context.Context, obj any) (SendConfirmationCodeInput, error) {
 	var it SendConfirmationCodeInput
@@ -523,6 +797,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "securityImage":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_securityImage(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "processFirebaseAuth":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_processFirebaseAuth(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -615,6 +903,45 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
+var securityImagePayloadImplementors = []string{"SecurityImagePayload"}
+
+func (ec *executionContext) _SecurityImagePayload(ctx context.Context, sel ast.SelectionSet, obj *SecurityImagePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, securityImagePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SecurityImagePayload")
+		case "image":
+			out.Values[i] = ec._SecurityImagePayload_image(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
@@ -627,6 +954,30 @@ func (ec *executionContext) unmarshalNDeliveryMethod2githubᚗcomᚋezexᚑioᚋ
 
 func (ec *executionContext) marshalNDeliveryMethod2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐDeliveryMethod(ctx context.Context, sel ast.SelectionSet, v DeliveryMethod) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNProcessFirebaseAuthInput2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐProcessFirebaseAuthInput(ctx context.Context, v any) (ProcessFirebaseAuthInput, error) {
+	res, err := ec.unmarshalInputProcessFirebaseAuthInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNSecurityImageInput2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐSecurityImageInput(ctx context.Context, v any) (SecurityImageInput, error) {
+	res, err := ec.unmarshalInputSecurityImageInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSecurityImagePayload2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐSecurityImagePayload(ctx context.Context, sel ast.SelectionSet, v SecurityImagePayload) graphql.Marshaler {
+	return ec._SecurityImagePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSecurityImagePayload2ᚖgithubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐSecurityImagePayload(ctx context.Context, sel ast.SelectionSet, v *SecurityImagePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SecurityImagePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNSendConfirmationCodeInput2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐSendConfirmationCodeInput(ctx context.Context, v any) (SendConfirmationCodeInput, error) {

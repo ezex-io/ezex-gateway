@@ -165,10 +165,6 @@ github.com/ezex-io/ezex-notification v0.0.0-20250327163537-03652af2e3ad h1:xwspu
 github.com/ezex-io/ezex-notification v0.0.0-20250327163537-03652af2e3ad/go.mod h1:Yy6vyH+saoBwoTInYBF9XFLf4HI6FLPHDAvcD44RbYk=
 github.com/ezex-io/gopkg/errors v0.1.0 h1:IEBc4FWZu/35aSvWaWcLmL+FOXFknLjFQss3yy4QZck=
 github.com/ezex-io/gopkg/errors v0.1.0/go.mod h1:UNQnGeGfSiPsnEZikG6swa/3Q7EFO312oR6qHdqsBc8=
-github.com/ezex-io/gopkg/logger v0.1.0 h1:/TYuRQEOK8njvr3PRXqzBcmVpQOW7u3pxW2VscfF0ss=
-github.com/ezex-io/gopkg/logger v0.1.0/go.mod h1:7f/HJZ9OkpWzCTNPhCYTCo6CMEEu5T61dU5u9fB1XE8=
-github.com/ezex-io/gopkg/logger v0.1.1 h1:peHKpeatLdK3KBqdRSuzmKcHhpc+0UUz5Qf7Zz4ql/M=
-github.com/ezex-io/gopkg/logger v0.1.1/go.mod h1:7f/HJZ9OkpWzCTNPhCYTCo6CMEEu5T61dU5u9fB1XE8=
 github.com/ezex-io/gopkg/logger v0.1.2 h1:q9y7d2Gj5DJFJ7pellZSpjSa4WSJm9B7yNxRPgdQQN4=
 github.com/ezex-io/gopkg/logger v0.1.2/go.mod h1:7f/HJZ9OkpWzCTNPhCYTCo6CMEEu5T61dU5u9fB1XE8=
 github.com/ezex-io/gopkg/middleware/http-mdl v0.1.0 h1:fZx4hDgKj9qNk7iXQKtpG5WsECJcZJpK9z46NktrFgM=

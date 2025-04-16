@@ -20,9 +20,18 @@ var DefaultConfig = &Config{
 
 func LoadFromEnv() (*Config, error) {
 	config := &Config{
-		ConfirmationCodeTTL:      utils.GetEnvDurationOrDefault("AUTH_CONFIRMATION_CODE_TTL", DefaultConfig.ConfirmationCodeTTL),
-		ConfirmationTemplateName: utils.GetEnvOrDefault("AUTH_CONFIRMATION_TEMPLATE", DefaultConfig.ConfirmationTemplateName),
-		ConfirmationCodeSubject:  utils.GetEnvOrDefault("AUTH_CONFIRMATION_SUBJECT", DefaultConfig.ConfirmationCodeSubject),
+		ConfirmationCodeTTL: utils.GetEnvDurationOrDefault(
+			"AUTH_CONFIRMATION_CODE_TTL",
+			DefaultConfig.ConfirmationCodeTTL,
+		),
+		ConfirmationTemplateName: utils.GetEnvOrDefault(
+			"AUTH_CONFIRMATION_TEMPLATE",
+			DefaultConfig.ConfirmationTemplateName,
+		),
+		ConfirmationCodeSubject: utils.GetEnvOrDefault(
+			"AUTH_CONFIRMATION_SUBJECT",
+			DefaultConfig.ConfirmationCodeSubject,
+		),
 	}
 
 	return config, nil

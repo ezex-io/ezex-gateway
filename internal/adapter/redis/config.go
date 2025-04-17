@@ -18,29 +18,17 @@ type Config struct {
 	Protocol     int
 }
 
-var DefaultConfig = &Config{
-	Host:         "localhost",
-	Port:         6379,
-	DB:           0,
-	Password:     "",
-	DialTimeout:  5 * time.Second,
-	ReadTimeout:  5 * time.Second,
-	WriteTimeout: 5 * time.Second,
-	PoolSize:     10,
-	Protocol:     3,
-}
-
 func LoadFromEnv() (*Config, error) {
 	config := &Config{
-		Host:         utils.GetEnvOrDefault("REDIS_HOST", DefaultConfig.Host),
-		Port:         utils.GetEnvIntOrDefault("REDIS_PORT", DefaultConfig.Port),
-		DB:           utils.GetEnvIntOrDefault("REDIS_DB", DefaultConfig.DB),
-		Password:     utils.GetEnvOrDefault("REDIS_PASSWORD", DefaultConfig.Password),
-		DialTimeout:  utils.GetEnvDurationOrDefault("REDIS_DIAL_TIMEOUT", DefaultConfig.DialTimeout),
-		ReadTimeout:  utils.GetEnvDurationOrDefault("REDIS_READ_TIMEOUT", DefaultConfig.ReadTimeout),
-		WriteTimeout: utils.GetEnvDurationOrDefault("REDIS_WRITE_TIMEOUT", DefaultConfig.WriteTimeout),
-		PoolSize:     utils.GetEnvIntOrDefault("REDIS_POOL_SIZE", DefaultConfig.PoolSize),
-		Protocol:     utils.GetEnvIntOrDefault("REDIS_PROTOCOL", DefaultConfig.Protocol),
+		Host:         utils.GetEnvOrDefault("EZEX_REDIS_HOST", "localhost"),
+		Port:         utils.GetEnvIntOrDefault("EZEX_REDIS_PORT", 6379),
+		DB:           utils.GetEnvIntOrDefault("EZEX_REDIS_DB", 0),
+		Password:     utils.GetEnvOrDefault("EZEX_REDIS_PASSWORD", ""),
+		DialTimeout:  utils.GetEnvDurationOrDefault("EZEX_REDIS_DIAL_TIMEOUT", 5*time.Second),
+		ReadTimeout:  utils.GetEnvDurationOrDefault("EZEX_REDIS_READ_TIMEOUT", 5*time.Second),
+		WriteTimeout: utils.GetEnvDurationOrDefault("EZEX_REDIS_WRITE_TIMEOUT", 5*time.Second),
+		PoolSize:     utils.GetEnvIntOrDefault("EZEX_REDIS_POOL_SIZE", 10),
+		Protocol:     utils.GetEnvIntOrDefault("EZEX_REDIS_PROTOCOL", 3),
 	}
 
 	return config, nil

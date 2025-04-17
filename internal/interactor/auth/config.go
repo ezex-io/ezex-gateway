@@ -12,25 +12,19 @@ type Config struct {
 	ConfirmationCodeSubject  string
 }
 
-var DefaultConfig = &Config{
-	ConfirmationCodeTTL:      5 * time.Minute,
-	ConfirmationTemplateName: "confirmation_letter",
-	ConfirmationCodeSubject:  "ezeX Confirmation Code: %s",
-}
-
 func LoadFromEnv() (*Config, error) {
 	config := &Config{
 		ConfirmationCodeTTL: utils.GetEnvDurationOrDefault(
-			"AUTH_CONFIRMATION_CODE_TTL",
-			DefaultConfig.ConfirmationCodeTTL,
+			"EZEX_AUTH_CONFIRMATION_CODE_TTL",
+			5*time.Minute,
 		),
 		ConfirmationTemplateName: utils.GetEnvOrDefault(
-			"AUTH_CONFIRMATION_TEMPLATE",
-			DefaultConfig.ConfirmationTemplateName,
+			"EZEX_AUTH_CONFIRMATION_TEMPLATE",
+			"confirmation_letter",
 		),
 		ConfirmationCodeSubject: utils.GetEnvOrDefault(
-			"AUTH_CONFIRMATION_SUBJECT",
-			DefaultConfig.ConfirmationCodeSubject,
+			"EZEX_AUTH_CONFIRMATION_SUBJECT",
+			"ezeX Confirmation Code: %s",
 		),
 	}
 

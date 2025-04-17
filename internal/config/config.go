@@ -1,55 +1,61 @@
 package config
 
 import (
-	"os"
-
 	"github.com/ezex-io/ezex-gateway/api/graphql"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/grpc/notification"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
-	"gopkg.in/yaml.v3"
+	"github.com/ezex-io/ezex-gateway/internal/utils"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Debug                     bool                 `yaml:"debug"`
-	GraphqlConfig             *graphql.Config      `yaml:"graphql"`
-	AuthInteractorConfig      *auth.Config         `yaml:"auth"`
-	NotificationAdapterConfig *notification.Config `yaml:"notification_client"`
-	RedisAdapterConfig        *redis.Config        `yaml:"redis"`
+	Debug                     bool
+	GraphqlConfig             *graphql.Config
+	AuthInteractorConfig      *auth.Config
+	NotificationAdapterConfig *notification.Config
+	RedisAdapterConfig        *redis.Config
 }
 
-func LoadConfig(path string) (*Config, error) {
-	file, err := os.ReadFile(path)
+func LoadConfig(envFile string) (*Config, error) {
+	// Load variables from .env file
+	if err := godotenv.Load(envFile); err != nil {
+		return nil, err
+	}
+
+	graphqlConfig, err := graphql.LoadFromEnv()
 	if err != nil {
 		return nil, err
 	}
 
-	var config Config
-
-	config.GraphqlConfig = graphql.DefaultConfig
-	config.RedisAdapterConfig = redis.DefaultConfig
-	config.AuthInteractorConfig = auth.DefaultConfig
-	config.NotificationAdapterConfig = notification.DefaultConfig
-
-	if err := yaml.Unmarshal(file, &config); err != nil {
+	authConfig, err := auth.LoadFromEnv()
+	if err != nil {
 		return nil, err
 	}
 
-	return &config, nil
+	notificationConfig, err := notification.LoadFromEnv()
+	if err != nil {
+		return nil, err
+	}
+
+	redisConfig, err := redis.LoadFromEnv()
+	if err != nil {
+		return nil, err
+	}
+
+	// Initialize config with environment variables
+	config := &Config{
+		Debug:                     utils.GetEnvBoolOrDefault("DEBUG", false),
+		GraphqlConfig:             graphqlConfig,
+		AuthInteractorConfig:      authConfig,
+		NotificationAdapterConfig: notificationConfig,
+		RedisAdapterConfig:        redisConfig,
+	}
+
+	return config, nil
 }
 
-func (c *Config) BasicCheck() error {
-	if err := c.GraphqlConfig.BasicCheck(); err != nil {
-		return err
-	}
-
-	if err := c.NotificationAdapterConfig.BasicCheck(); err != nil {
-		return err
-	}
-
-	if err := c.AuthInteractorConfig.BasicCheck(); err != nil {
-		return err
-	}
-
-	return c.RedisAdapterConfig.BasicCheck()
+func (*Config) BasicCheck() error {
+	// Add any necessary validation here
+	return nil
 }

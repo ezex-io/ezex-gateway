@@ -1,31 +1,48 @@
 package graphql
 
+import (
+	"github.com/ezex-io/ezex-gateway/internal/utils"
+)
+
 type Config struct {
-	Address    string `yaml:"address"`
-	Port       int    `yaml:"port"`
-	Playground bool   `yaml:"playground"`
-	QueryPath  string `yaml:"query_path"`
-	CORS       Cors   `yaml:"cors"`
+	Address    string
+	Port       int
+	Playground bool
+	QueryPath  string
+	CORS       Cors
 }
 
 type Cors struct {
-	AllowedOrigins   []string `yaml:"allowed_origins"`
-	AllowedMethods   []string `yaml:"allowed_methods"`
-	AllowedHeaders   []string `yaml:"allowed_headers"`
-	AllowCredentials bool     `yaml:"allow_credentials"`
+	AllowedOrigins   []string
+	AllowedMethods   []string
+	AllowedHeaders   []string
+	AllowCredentials bool
 }
 
-var DefaultConfig = &Config{
-	Address:    "0.0.0.0",
-	Port:       8080,
-	Playground: true,
-	QueryPath:  "",
-	CORS: Cors{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
-		AllowedHeaders:   []string{"*"},
-		AllowCredentials: true,
-	},
+func LoadFromEnv() (*Config, error) {
+	config := &Config{
+		Address:    utils.GetEnvOrDefault("EZEX_GRAPHQL_ADDRESS", "0.0.0.0"),
+		Port:       utils.GetEnvIntOrDefault("EZEX_GRAPHQL_PORT", 8080),
+		Playground: utils.GetEnvBoolOrDefault("EZEX_GRAPHQL_PLAYGROUND", true),
+		QueryPath:  utils.GetEnvOrDefault("EZEX_GRAPHQL_QUERY_PATH", ""),
+		CORS: Cors{
+			AllowedOrigins: utils.GetEnvSliceOrDefault(
+				"EZEX_GRAPHQL_CORS_ALLOWED_ORIGINS", []string{"*"},
+			),
+			AllowedMethods: utils.GetEnvSliceOrDefault(
+				"EZEX_GRAPHQL_CORS_ALLOWED_METHODS",
+				[]string{"GET", "POST", "PUT", "PATCH", "DELETE"},
+			),
+			AllowedHeaders: utils.GetEnvSliceOrDefault(
+				"EZEX_GRAPHQL_CORS_ALLOWED_HEADERS", []string{"*"},
+			),
+			AllowCredentials: utils.GetEnvBoolOrDefault(
+				"EZEX_GRAPHQL_CORS_ALLOW_CREDENTIALS", true,
+			),
+		},
+	}
+
+	return config, nil
 }
 
 func (*Config) BasicCheck() error {

@@ -21,11 +21,11 @@ type testStruct struct {
 func setupRedis(t *testing.T) *Adapter {
 	t.Helper()
 
-	host := os.Getenv("EZEX_REDIS_HOST")
+	host := os.Getenv("EZEX_GATEWAY_REDIS_HOST")
 	if host == "" {
 		host = "localhost"
 	}
-	port := os.Getenv("EZEX_REDIS_PORT")
+	port := os.Getenv("EZEX_GATEWAY_REDIS_PORT")
 	if port == "" {
 		port = "6379"
 	}

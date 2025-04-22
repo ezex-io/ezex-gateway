@@ -15,15 +15,15 @@ type Config struct {
 func LoadFromEnv() (*Config, error) {
 	config := &Config{
 		ConfirmationCodeTTL: utils.GetEnvDurationOrDefault(
-			"EZEX_AUTH_CONFIRMATION_CODE_TTL",
+			"EZEX_GATEWAY_AUTH_CONFIRMATION_CODE_TTL",
 			5*time.Minute,
 		),
 		ConfirmationTemplateName: utils.GetEnvOrDefault(
-			"EZEX_AUTH_CONFIRMATION_TEMPLATE",
+			"EZEX_GATEWAY_AUTH_CONFIRMATION_TEMPLATE",
 			"confirmation_letter",
 		),
 		ConfirmationCodeSubject: utils.GetEnvOrDefault(
-			"EZEX_AUTH_CONFIRMATION_SUBJECT",
+			"EZEX_GATEWAY_AUTH_CONFIRMATION_SUBJECT",
 			"ezeX Confirmation Code: %s",
 		),
 	}

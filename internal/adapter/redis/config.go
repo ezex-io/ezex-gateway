@@ -19,7 +19,7 @@ type Config struct {
 
 func LoadFromEnv() (*Config, error) {
 	config := &Config{
-		Address:      env.GetEnv[string]("EZEX_GATEWAY_REDIS_HOST", env.WithDefault("localhost:6379")),
+		Address:      env.GetEnv[string]("EZEX_GATEWAY_REDIS_ADDRESS", env.WithDefault("localhost:6379")),
 		DB:           env.GetEnv[int]("EZEX_GATEWAY_REDIS_DB", env.WithDefault("0")),
 		Password:     env.GetEnv[string]("EZEX_GATEWAY_REDIS_PASSWORD"),
 		DialTimeout:  env.GetEnv[time.Duration]("EZEX_GATEWAY_REDIS_DIAL_TIMEOUT", env.WithDefault("5s")),

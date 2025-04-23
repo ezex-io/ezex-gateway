@@ -20,8 +20,8 @@ type Cors struct {
 
 func LoadFromEnv() (*Config, error) {
 	config := &Config{
-		Address:    env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_ADDRESS", env.WithDefault("0.0.0.0:8080")),
-		QueryPath:  env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_QUERY_PATH"),
+		Address:   env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_ADDRESS", env.WithDefault("0.0.0.0:8080")),
+		QueryPath: env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_QUERY_PATH"),
 		CORS: Cors{
 			AllowedOrigins:   env.GetEnv[[]string]("EZEX_GATEWAY_GRAPHQL_CORS_ALLOWED_ORIGINS"),
 			AllowedMethods:   env.GetEnv[[]string]("EZEX_GATEWAY_GRAPHQL_CORS_ALLOWED_METHODS"),

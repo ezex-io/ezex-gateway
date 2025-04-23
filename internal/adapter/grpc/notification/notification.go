@@ -1,8 +1,6 @@
 package notification
 
 import (
-	"fmt"
-
 	"github.com/ezex-io/ezex-gateway/internal/port"
 	proto "github.com/ezex-io/ezex-notification/pkg/grpc"
 	"golang.org/x/net/context"
@@ -16,7 +14,7 @@ type Adapter struct {
 }
 
 func New(cfg *Config) (port.NotificationPort, error) {
-	conn, err := grpc.NewClient(fmt.Sprintf("%s:%d", cfg.Address, cfg.Port),
+	conn, err := grpc.NewClient(cfg.Address,
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err

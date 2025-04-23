@@ -5,7 +5,7 @@ import (
 	"github.com/ezex-io/ezex-gateway/internal/adapter/grpc/notification"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
-	"github.com/ezex-io/ezex-gateway/internal/utils"
+	"github.com/ezex-io/gopkg/env"
 )
 
 type Config struct {
@@ -39,12 +39,14 @@ func makeConfig() (*Config, error) {
 
 	// Initialize config with environment variables
 	config := &Config{
-		Debug:                     utils.GetEnvBoolOrDefault("DEBUG", false),
+		Debug:                     env.GetEnv[bool]("DEBUG", env.WithDefault("false")),
 		GraphqlConfig:             graphqlConfig,
 		AuthInteractorConfig:      authConfig,
 		NotificationAdapterConfig: notificationConfig,
 		RedisAdapterConfig:        redisConfig,
 	}
+
+	config.GraphqlConfig.Playground = config.Debug
 
 	return config, nil
 }

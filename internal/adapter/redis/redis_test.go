@@ -5,7 +5,6 @@ package redis
 
 import (
 	"context"
-	"os"
 	"strconv"
 	"testing"
 	"time"
@@ -21,18 +20,13 @@ type testStruct struct {
 func setupRedis(t *testing.T) *Adapter {
 	t.Helper()
 
-	host := os.Getenv("EZEX_GATEWAY_REDIS_HOST")
+	address := env.Getenv("EZEX_GATEWAY_REDIS_ADDRESS")
 	if host == "" {
 		host = "localhost"
-	}
-	port := os.Getenv("EZEX_GATEWAY_REDIS_PORT")
-	if port == "" {
-		port = "6379"
 	}
 
 	cfg := &Config{
 		Host:         host,
-		Port:         mustAtoi(port),
 		DB:           0,
 		DialTimeout:  2 * time.Second,
 		ReadTimeout:  2 * time.Second,

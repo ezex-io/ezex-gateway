@@ -11,7 +11,7 @@ tool mvdan.cc/gofumpt
 require (
 	github.com/99designs/gqlgen v0.17.68
 	github.com/ezex-io/ezex-notification v0.0.0-20250422084646-5fc037ce4cd3
-	github.com/ezex-io/gopkg/env v0.0.0-20250422074111-9c9f13c1b068
+	github.com/ezex-io/gopkg/env v0.0.0-20250423183848-22b9bb75c16f
 	github.com/ezex-io/gopkg/errors v0.1.0
 	github.com/ezex-io/gopkg/logger v0.1.2
 	github.com/ezex-io/gopkg/middleware/http-mdl v0.1.0

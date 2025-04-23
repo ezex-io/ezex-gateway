@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -34,7 +33,7 @@ func main() {
 	if err != nil {
 		logging.Fatal(err.Error())
 	}
-	logging.Info("successfully loaded config")
+	logging.Info("successfully loaded config", "debug", cfg.Debug)
 
 	if cfg.Debug {
 		logging = logger.NewSlog(logger.WithTextHandler(os.Stdout, slog.LevelDebug))
@@ -62,8 +61,7 @@ func main() {
 	gql := graphql.New(cfg.GraphqlConfig, resolve, logging, mdl.Recover())
 
 	gql.Start()
-	logging.Info("graphql server started", "addr",
-		fmt.Sprintf("%s:%d", cfg.GraphqlConfig.Address, cfg.GraphqlConfig.Port))
+	logging.Info("graphql server started", "addr", cfg.GraphqlConfig.Address)
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)

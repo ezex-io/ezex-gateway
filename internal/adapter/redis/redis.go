@@ -19,7 +19,7 @@ type Adapter struct {
 
 func New(cfg *Config) (port.RedisPort, error) {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:         fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		Addr:         cfg.Address,
 		Password:     cfg.Password,
 		DB:           cfg.DB,
 		DialTimeout:  cfg.DialTimeout,

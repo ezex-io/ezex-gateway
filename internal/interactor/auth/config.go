@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	"github.com/ezex-io/ezex-gateway/internal/utils"
+	"github.com/ezex-io/gopkg/env"
 )
 
 type Config struct {
@@ -14,18 +14,9 @@ type Config struct {
 
 func LoadFromEnv() (*Config, error) {
 	config := &Config{
-		ConfirmationCodeTTL: utils.GetEnvDurationOrDefault(
-			"EZEX_GATEWAY_AUTH_CONFIRMATION_CODE_TTL",
-			5*time.Minute,
-		),
-		ConfirmationTemplateName: utils.GetEnvOrDefault(
-			"EZEX_GATEWAY_AUTH_CONFIRMATION_TEMPLATE",
-			"confirmation_letter",
-		),
-		ConfirmationCodeSubject: utils.GetEnvOrDefault(
-			"EZEX_GATEWAY_AUTH_CONFIRMATION_SUBJECT",
-			"ezeX Confirmation Code: %s",
-		),
+		ConfirmationCodeTTL:      env.GetEnv[time.Duration]("EZEX_GATEWAY_AUTH_CONFIRMATION_CODE_TTL", env.WithDefault("5m")),
+		ConfirmationTemplateName: env.GetEnv[string]("EZEX_GATEWAY_AUTH_CONFIRMATION_TEMPLATE", env.WithDefault("confirmation_letter")),
+		ConfirmationCodeSubject:  env.GetEnv[string]("EZEX_GATEWAY_AUTH_CONFIRMATION_SUBJECT", env.WithDefault("ezeX Confirmation Code: %s")),
 	}
 
 	return config, nil

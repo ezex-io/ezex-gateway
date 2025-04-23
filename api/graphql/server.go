@@ -77,7 +77,7 @@ func New(cfg *Config, resolver *resolver.Resolver, logging logger.Logger,
 	}
 
 	srv := &http.Server{
-		Addr:           fmt.Sprintf("%s:%d", cfg.Address, cfg.Port),
+		Addr:           cfg.Address,
 		Handler:        finalHandler,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   15 * time.Second,

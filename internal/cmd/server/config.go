@@ -39,7 +39,7 @@ func makeConfig() (*Config, error) {
 
 	// Initialize config with environment variables
 	config := &Config{
-		Debug:                     env.GetEnv[bool]("DEBUG", env.WithDefault("false")),
+		Debug:                     env.GetEnv[bool]("EZEX_GATEWAY_DEBUG", env.WithDefault("false")),
 		GraphqlConfig:             graphqlConfig,
 		AuthInteractorConfig:      authConfig,
 		NotificationAdapterConfig: notificationConfig,

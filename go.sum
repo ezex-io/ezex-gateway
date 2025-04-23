@@ -161,8 +161,10 @@ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1m
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/ettle/strcase v0.2.0 h1:fGNiVF21fHXpX1niBgk0aROov1LagYsOwV/xqKDKR/Q=
 github.com/ettle/strcase v0.2.0/go.mod h1:DajmHElDSaX76ITe3/VHVyMin4LWSJN5Z909Wp+ED1A=
-github.com/ezex-io/ezex-notification v0.0.0-20250327163537-03652af2e3ad h1:xwspuwAYA4ZTaXIKjjJS23jRh/hXnTWM9q0p+baE8L8=
-github.com/ezex-io/ezex-notification v0.0.0-20250327163537-03652af2e3ad/go.mod h1:Yy6vyH+saoBwoTInYBF9XFLf4HI6FLPHDAvcD44RbYk=
+github.com/ezex-io/ezex-notification v0.0.0-20250422084646-5fc037ce4cd3 h1:8QIRfGYNkNGE33wCuqV0KTNz5njX5+4m8tj7FbfXq0M=
+github.com/ezex-io/ezex-notification v0.0.0-20250422084646-5fc037ce4cd3/go.mod h1:a5VzU29wZ+G7CNkr8kPCApGcGQPiupF/UyOoMlyNcBo=
+github.com/ezex-io/gopkg/env v0.0.0-20250422074111-9c9f13c1b068 h1:ond8ur8Rxg2xM9Us94HBF/lSu/2vngsvzre6du4Thls=
+github.com/ezex-io/gopkg/env v0.0.0-20250422074111-9c9f13c1b068/go.mod h1:znyBfFWkxeSFZPtqJT86knANj6w5XCXn+y8hsdGst/E=
 github.com/ezex-io/gopkg/errors v0.1.0 h1:IEBc4FWZu/35aSvWaWcLmL+FOXFknLjFQss3yy4QZck=
 github.com/ezex-io/gopkg/errors v0.1.0/go.mod h1:UNQnGeGfSiPsnEZikG6swa/3Q7EFO312oR6qHdqsBc8=
 github.com/ezex-io/gopkg/logger v0.1.2 h1:q9y7d2Gj5DJFJ7pellZSpjSa4WSJm9B7yNxRPgdQQN4=

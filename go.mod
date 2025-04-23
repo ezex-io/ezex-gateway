@@ -10,11 +10,11 @@ tool mvdan.cc/gofumpt
 
 require (
 	github.com/99designs/gqlgen v0.17.68
-	github.com/ezex-io/ezex-notification v0.0.0-20250327163537-03652af2e3ad
+	github.com/ezex-io/ezex-notification v0.0.0-20250422084646-5fc037ce4cd3
+	github.com/ezex-io/gopkg/env v0.0.0-20250422074111-9c9f13c1b068
 	github.com/ezex-io/gopkg/errors v0.1.0
 	github.com/ezex-io/gopkg/logger v0.1.2
 	github.com/ezex-io/gopkg/middleware/http-mdl v0.1.0
-	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/stretchr/testify v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.23
@@ -109,6 +109,7 @@ require (
 	github.com/jgautheron/goconst v1.7.1 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
 	github.com/jjti/go-spancheck v0.6.4 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/julz/importas v0.2.0 // indirect
 	github.com/karamaru-alpha/copyloopvar v1.2.1 // indirect
 	github.com/kisielk/errcheck v1.9.0 // indirect

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ezex-io/ezex-gateway/internal/port"
-	"github.com/ezex-io/ezex-notification/api/grpc/proto"
+	proto "github.com/ezex-io/ezex-notification/pkg/grpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -12,16 +13,24 @@ import (
 	"github.com/ezex-io/ezex-gateway/api/graphql/resolver"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/grpc/notification"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
-	"github.com/ezex-io/ezex-gateway/internal/config"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
+	"github.com/ezex-io/gopkg/env"
 	"github.com/ezex-io/gopkg/logger"
 	mdl "github.com/ezex-io/gopkg/middleware/http-mdl"
 )
 
 func main() {
+	envFile := flag.String("env", ".env", "Path to environment file")
+	flag.Parse()
+
 	logging := logger.NewSlog(nil)
 
-	cfg, err := config.LoadConfig(".env")
+	// TODO: move me into makeConfig
+	if err := env.LoadEnvsFromFile(*envFile); err != nil {
+		logging.Debug("Failed to load env file '%s': %v. Continuing with system environment...", *envFile, err)
+	}
+
+	cfg, err := makeConfig()
 	if err != nil {
 		logging.Fatal(err.Error())
 	}

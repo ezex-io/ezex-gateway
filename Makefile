@@ -1,6 +1,6 @@
 BINARY_NAME = ezex-gateway
 BUILD_DIR = build
-CMD_DIR = internal/cmd/main.go
+CMD_DIR = ./internal/cmd/server
 
 ########################################
 ### Targets needed for development

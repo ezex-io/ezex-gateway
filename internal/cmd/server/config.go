@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"github.com/ezex-io/ezex-gateway/api/graphql"
@@ -6,7 +6,6 @@ import (
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 	"github.com/ezex-io/ezex-gateway/internal/utils"
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -17,12 +16,7 @@ type Config struct {
 	RedisAdapterConfig        *redis.Config
 }
 
-func LoadConfig(envFile string) (*Config, error) {
-	// Load variables from .env file
-	if err := godotenv.Load(envFile); err != nil {
-		return nil, err
-	}
-
+func makeConfig() (*Config, error) {
 	graphqlConfig, err := graphql.LoadFromEnv()
 	if err != nil {
 		return nil, err

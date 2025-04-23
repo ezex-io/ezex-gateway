@@ -15,4 +15,4 @@ COPY --from=builder /app/build/ezex-gateway /usr/bin/ezex-gateway
 
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/bin/ezex-gateway", "-config", "/etc/gateway/config.yml"]
+ENTRYPOINT ["/usr/bin/ezex-gateway"]

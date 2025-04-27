@@ -12,11 +12,11 @@ import (
 
 	"github.com/ezex-io/gopkg/logger"
 
-	"github.com/ezex-io/ezex-gateway/api/graphql/gen"
-	"github.com/ezex-io/ezex-gateway/internal/adapter/grpc/notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 	"github.com/ezex-io/ezex-gateway/internal/port"
+	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -33,7 +33,7 @@ func setupAuth(t *testing.T) *authData {
 	notifAddressEnv := os.Getenv("NOTIFICATION_ADDRESS")
 	notifPortEnv := os.Getenv("NOTIFICATION_PORT")
 
-	notifCfg := notification.DefaultConfig
+	notifCfg := ezex_notification.DefaultConfig
 
 	if notifAddressEnv != "" {
 		notifCfg.Address = notifAddressEnv
@@ -46,7 +46,7 @@ func setupAuth(t *testing.T) *authData {
 		notifCfg.Port = p
 	}
 
-	notificationPort, err := notification.New(notifCfg)
+	notificationPort, err := ezex_notification.New(notifCfg)
 	require.NoError(t, err)
 
 	redisCfg := redis.DefaultConfig

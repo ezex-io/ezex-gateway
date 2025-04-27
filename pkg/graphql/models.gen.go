@@ -8,6 +8,16 @@ import (
 	"strconv"
 )
 
+type GetSecurityImageInput struct {
+	Email string `json:"email"`
+}
+
+type GetSecurityImagePayload struct {
+	Email  string `json:"email"`
+	Image  string `json:"image"`
+	Phrase string `json:"phrase"`
+}
+
 type Mutation struct {
 }
 
@@ -18,18 +28,19 @@ type ProcessFirebaseAuthInput struct {
 type Query struct {
 }
 
-type SecurityImageInput struct {
-	Email string `json:"email"`
+type SendConfirmationCodeInput struct {
+	Method    DeliveryMethod `json:"method"`
+	Recipient string         `json:"recipient"`
 }
 
-type SecurityImagePayload struct {
+type SetSecurityImageInput struct {
+	Email  string `json:"email"`
 	Image  string `json:"image"`
 	Phrase string `json:"phrase"`
 }
 
-type SendConfirmationCodeInput struct {
-	Method    DeliveryMethod `json:"method"`
-	Recipient string         `json:"recipient"`
+type SetSecurityImagePayload struct {
+	Email string `json:"email"`
 }
 
 type VerifyConfirmationCodeInput struct {

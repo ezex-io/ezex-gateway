@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ezex-io/ezex-gateway/api/graphql"
-	"github.com/ezex-io/ezex-gateway/internal/adapter/grpc/notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 	"github.com/ezex-io/gopkg/env"
@@ -12,7 +12,7 @@ type Config struct {
 	Debug                     bool
 	GraphqlConfig             *graphql.Config
 	AuthInteractorConfig      *auth.Config
-	NotificationAdapterConfig *notification.Config
+	NotificationAdapterConfig *ezex_notification.Config
 	RedisAdapterConfig        *redis.Config
 }
 
@@ -27,7 +27,7 @@ func makeConfig() (*Config, error) {
 		return nil, err
 	}
 
-	notificationConfig, err := notification.LoadFromEnv()
+	notificationConfig, err := ezex_notification.LoadFromEnv()
 	if err != nil {
 		return nil, err
 	}

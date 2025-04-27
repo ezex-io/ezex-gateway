@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ezex-io/ezex-gateway/api/graphql"
-	"github.com/ezex-io/ezex-gateway/api/graphql/resolver"
-	"github.com/ezex-io/ezex-gateway/internal/adapter/grpc/notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/resolver"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 	"github.com/ezex-io/gopkg/env"
@@ -46,7 +46,7 @@ func main() {
 	}
 	logging.Info("initialized redis adapter")
 
-	notificationPort, err := notification.New(cfg.NotificationAdapterConfig)
+	notificationPort, err := ezex_notification.New(cfg.NotificationAdapterConfig)
 	if err != nil {
 		logging.Error(err.Error())
 		os.Exit(1)
@@ -56,9 +56,9 @@ func main() {
 
 	authInteractor := auth.NewAuth(cfg.AuthInteractorConfig, logging, notificationPort, redisPort)
 
-	resolve := resolver.NewResolver(authInteractor)
+	resolver := resolver.NewResolver(authInteractor)
 
-	gql := graphql.New(cfg.GraphqlConfig, resolve, logging, mdl.Recover())
+	gql := graphql.New(cfg.GraphqlConfig, resolver, logging, mdl.Recover())
 
 	gql.Start()
 	logging.Info("graphql server started", "addr", cfg.GraphqlConfig.Address)

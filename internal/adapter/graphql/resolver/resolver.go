@@ -1,8 +1,8 @@
 package resolver
 
 import (
-	"github.com/ezex-io/ezex-gateway/api/graphql/gen"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
+	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
 )
 
 type Resolver struct {
@@ -15,11 +15,11 @@ func NewResolver(auth *auth.Auth) *Resolver {
 	}
 }
 
-func (r *Resolver) Mutation() gen.MutationResolver {
+func (r *Resolver) Mutation() gen.MutationResolver { //nolint:ireturn // TODO: fix the linter if possible
 	return &mutationResolver{r}
 }
 
-func (r *Resolver) Query() gen.QueryResolver {
+func (r *Resolver) Query() gen.QueryResolver { //nolint:ireturn // TODO: fix the linter if possible
 	return &queryResolver{r}
 }
 

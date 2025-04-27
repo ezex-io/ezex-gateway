@@ -147,11 +147,11 @@ func (ec *executionContext) _VoidPayload(ctx context.Context, sel ast.SelectionS
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNVoidPayload2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐVoidPayload(ctx context.Context, sel ast.SelectionSet, v VoidPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNVoidPayload2githubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋpkgᚋgraphqlᚐVoidPayload(ctx context.Context, sel ast.SelectionSet, v VoidPayload) graphql.Marshaler {
 	return ec._VoidPayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNVoidPayload2ᚖgithubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋapiᚋgraphqlᚋgenᚐVoidPayload(ctx context.Context, sel ast.SelectionSet, v *VoidPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNVoidPayload2ᚖgithubᚗcomᚋezexᚑioᚋezexᚑgatewayᚋpkgᚋgraphqlᚐVoidPayload(ctx context.Context, sel ast.SelectionSet, v *VoidPayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")

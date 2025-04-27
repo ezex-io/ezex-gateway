@@ -4,22 +4,22 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ezex-io/ezex-gateway/api/graphql/gen"
 	"github.com/ezex-io/ezex-gateway/internal/port"
 	"github.com/ezex-io/ezex-gateway/internal/utils"
+	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
 	"github.com/ezex-io/gopkg/logger"
 )
 
 type Auth struct {
 	notificationPort port.NotificationPort
-	redisPort        port.RedisPort
+	redisPort        port.CachePort
 
 	cfg     *Config
 	logging logger.Logger
 }
 
 func NewAuth(cfg *Config, logging logger.Logger,
-	notificationPort port.NotificationPort, redisPort port.RedisPort,
+	notificationPort port.NotificationPort, redisPort port.CachePort,
 ) *Auth {
 	return &Auth{
 		notificationPort: notificationPort,
@@ -49,7 +49,7 @@ func (a *Auth) SendConfirmationCode(ctx context.Context, recipient string, metho
 			return err
 		}
 
-		return a.redisPort.Set(ctx, recipient, code, a.cfg.ConfirmationCodeTTL)
+		return a.redisPort.Set(ctx, recipient, code, port.CacheWithTTL(a.cfg.ConfirmationCodeTTL))
 	default:
 		return fmt.Errorf("unknown delivery method: %s", method)
 	}

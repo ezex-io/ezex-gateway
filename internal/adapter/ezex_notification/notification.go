@@ -1,19 +1,21 @@
-package notification
+package ezex_notification
 
 import (
 	"github.com/ezex-io/ezex-gateway/internal/port"
-	proto "github.com/ezex-io/ezex-notification/pkg/grpc"
+	client "github.com/ezex-io/ezex-notification/pkg/grpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var _ port.NotificationPort = &Adapter{}
+
 type Adapter struct {
 	conn               *grpc.ClientConn
-	notificationClient proto.NotificationServiceClient
+	notificationClient client.NotificationServiceClient
 }
 
-func New(cfg *Config) (port.NotificationPort, error) {
+func New(cfg *Config) (*Adapter, error) {
 	conn, err := grpc.NewClient(cfg.Address,
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -22,7 +24,7 @@ func New(cfg *Config) (port.NotificationPort, error) {
 
 	return &Adapter{
 		conn:               conn,
-		notificationClient: proto.NewNotificationServiceClient(conn),
+		notificationClient: client.NewNotificationServiceClient(conn),
 	}, nil
 }
 
@@ -31,7 +33,7 @@ func (a *Adapter) Close() error {
 }
 
 func (a *Adapter) SendEmail(ctx context.Context, recipient, subject, template string, fields map[string]string) error {
-	_, err := a.notificationClient.SendEmail(ctx, &proto.SendEmailRequest{
+	_, err := a.notificationClient.SendEmail(ctx, &client.SendEmailRequest{
 		Recipient:      recipient,
 		Subject:        subject,
 		TemplateName:   template,

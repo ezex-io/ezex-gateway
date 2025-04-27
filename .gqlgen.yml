@@ -1,19 +1,19 @@
 schema:
-  - api/graphql/schema/*.graphql
+  - graphql/*.graphql
 
 exec:
   layout: follow-schema
-  dir: api/graphql/gen
+  dir: pkg/graphql
   filename_template: "{name}.gen.go"
   package: gen
 
 model:
-  filename: api/graphql/gen/models.gen.go
+  filename: pkg/graphql/models.gen.go
   package: gen
 
 resolver:
   layout: follow-schema
-  dir: api/graphql/gen
+  dir: pkg/graphql
   filename_template: "{name}.resolvers.gen.go"
   package: gen
 

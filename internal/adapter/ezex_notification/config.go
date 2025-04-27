@@ -1,4 +1,4 @@
-package notification
+package ezex_notification
 
 import "github.com/ezex-io/gopkg/env"
 

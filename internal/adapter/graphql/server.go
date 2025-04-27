@@ -12,9 +12,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
-	ext "github.com/ezex-io/ezex-gateway/api/graphql/extension"
-	"github.com/ezex-io/ezex-gateway/api/graphql/gen"
-	"github.com/ezex-io/ezex-gateway/api/graphql/resolver"
+	ext "github.com/ezex-io/ezex-gateway/internal/adapter/graphql/extension"
+	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
 	"github.com/ezex-io/gopkg/logger"
 	mdl "github.com/ezex-io/gopkg/middleware/http-mdl"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -25,7 +24,7 @@ type Server struct {
 	errCh chan error
 }
 
-func New(cfg *Config, resolver *resolver.Resolver, logging logger.Logger,
+func New(cfg *Config, resolver gen.ResolverRoot, logging logger.Logger,
 	middlewares ...mdl.Middleware,
 ) *Server {
 	mux := http.NewServeMux()
@@ -49,7 +48,7 @@ func New(cfg *Config, resolver *resolver.Resolver, logging logger.Logger,
 	graphSrv.Use(ext.LoggingExt(logging))
 
 	if cfg.Playground {
-		mux.Handle("/", playground.Handler("ezeX playground", "/query"))
+		mux.Handle("/playground", playground.Handler("ezeX playground", "/query"))
 	}
 
 	queryPath := "/query"

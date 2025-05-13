@@ -1,9 +1,39 @@
 package port
 
-import "context"
+import (
+	"context"
+)
+
+type ProcessLoginRequest struct {
+	Email       string
+	FirebaseUID string
+}
+
+type ProcessLoginResponse struct {
+	UserID string
+}
+
+type SaveSecurityImageRequest struct {
+	Email  string
+	Image  string
+	Phrase string
+}
+
+type SaveSecurityImageResponse struct {
+	Email string
+}
+
+type GetSecurityImageRequest struct {
+	Email string
+}
+
+type GetSecurityImageResponse struct {
+	Image  string
+	Phrase string
+}
 
 type UserPort interface {
-	ProcessFirebaseLogin(ctx context.Context, email, firebaseUID string) (userID string, err error)
-	SaveSecurityImage(ctx context.Context, email, securityImage, securityPhrase string) error
-	GetSecurityImage(ctx context.Context, email string) (securityImage string, securityPhrase string, err error)
+	ProcessLogin(ctx context.Context, req *ProcessLoginRequest) (*ProcessLoginResponse, error)
+	SaveSecurityImage(ctx context.Context, req *SaveSecurityImageRequest) (*SaveSecurityImageResponse, error)
+	GetSecurityImage(ctx context.Context, req *GetSecurityImageRequest) (*GetSecurityImageResponse, error)
 }

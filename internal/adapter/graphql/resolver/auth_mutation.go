@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
-	"github.com/ezex-io/ezex-gateway/internal/entity"
+	"github.com/ezex-io/ezex-gateway/internal/port"
 )
 
 func (m *mutationResolver) SendConfirmationCode(ctx context.Context,
@@ -32,7 +32,7 @@ func (m *mutationResolver) VerifyConfirmationCode(ctx context.Context,
 func (m *mutationResolver) SetSecurityImage(ctx context.Context,
 	inp gen.SetSecurityImageInput,
 ) (*gen.VoidPayload, error) {
-	err := m.auth.SaveSecurityImage(ctx, &entity.SaveSecurityImageReq{
+	_, err := m.auth.SaveSecurityImage(ctx, &port.SaveSecurityImageRequest{
 		Email:  inp.Email,
 		Image:  inp.Image,
 		Phrase: inp.Phrase,
@@ -47,7 +47,7 @@ func (m *mutationResolver) SetSecurityImage(ctx context.Context,
 func (m *mutationResolver) GetSecurityImage(ctx context.Context,
 	inp gen.GetSecurityImageInput,
 ) (*gen.GetSecurityImagePayload, error) {
-	resp, err := m.auth.GetSecurityImage(ctx, &entity.GetSecurityImageReq{
+	res, err := m.auth.GetSecurityImage(ctx, &port.GetSecurityImageRequest{
 		Email: inp.Email,
 	})
 	if err != nil {
@@ -55,20 +55,22 @@ func (m *mutationResolver) GetSecurityImage(ctx context.Context,
 	}
 
 	return &gen.GetSecurityImagePayload{
-		Image:  resp.Image,
-		Phrase: resp.Phrase,
+		Image:  res.Image,
+		Phrase: res.Phrase,
 	}, nil
 }
 
 func (m *mutationResolver) ProcessFirebaseAuth(ctx context.Context,
 	inp gen.ProcessFirebaseAuthInput,
 ) (*gen.ProcessFirebaseAuthPayload, error) {
-	userID, err := m.auth.ProcessFirebaseLogin(ctx, inp.Token)
+	res, err := m.auth.ProcessLogin(ctx, &port.VerifyIDTokenRequest{
+		IDToken: inp.Token,
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	return &gen.ProcessFirebaseAuthPayload{
-		UserID: &userID,
+		UserID: &res.UserID,
 	}, nil
 }

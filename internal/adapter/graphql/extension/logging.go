@@ -33,16 +33,16 @@ func (l *LoggingExtension) InterceptOperation(ctx context.Context,
 	respHandler := next(ctx)
 
 	return func(ctx context.Context) *graphql.Response {
-		resp := respHandler(ctx)
+		res := respHandler(ctx)
 		duration := time.Since(start)
 
 		l.logging.Debug("[GraphQL] new operation called",
 			"operation", opCtx.Operation.Operation,
 			"operation", opCtx.OperationName,
 			"name", duration,
-			"errors", resp.Errors,
+			"errors", res.Errors,
 		)
 
-		return resp
+		return res
 	}
 }

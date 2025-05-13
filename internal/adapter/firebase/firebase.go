@@ -14,7 +14,7 @@ type Firebase struct {
 	auth *auth.Client
 }
 
-func New(ctx context.Context, cfg *Config) (port.FirebasePort, error) {
+func New(ctx context.Context, cfg *Config) (*Firebase, error) {
 	app, err := firebase.NewApp(ctx, &firebase.Config{
 		ProjectID: cfg.ProjectID,
 	}, option.WithAPIKey(cfg.APIKey))
@@ -33,11 +33,15 @@ func New(ctx context.Context, cfg *Config) (port.FirebasePort, error) {
 	}, nil
 }
 
-func (f *Firebase) VerifyIDToken(ctx context.Context, idToken string) (*auth.Token, error) {
-	token, err := f.auth.VerifyIDToken(ctx, idToken)
+func (f *Firebase) VerifyIDToken(ctx context.Context, req *port.VerifyIDTokenRequest) (
+	*port.VerifyIDTokenResponse, error,
+) {
+	token, err := f.auth.VerifyIDToken(ctx, req.IDToken)
 	if err != nil {
 		return nil, err
 	}
 
-	return token, nil
+	return &port.VerifyIDTokenResponse{
+		Token: token,
+	}, nil
 }

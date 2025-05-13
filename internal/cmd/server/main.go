@@ -44,7 +44,7 @@ func main() {
 	}
 	logging.Info("initialized redis adapter")
 
-	firebasePort, err := firebase.New(context.Background(), cfg.Firebase)
+	authenticatorPort, err := firebase.New(context.Background(), cfg.Firebase)
 	if err != nil {
 		logging.Fatal(err.Error())
 	}
@@ -61,7 +61,7 @@ func main() {
 
 	logging.Info("initialized notification service adapter")
 
-	authInteractor := auth.NewAuth(cfg.AuthInteractor, logging, notificationPort, redisPort, firebasePort, userPort)
+	authInteractor := auth.NewAuth(cfg.AuthInteractor, logging, notificationPort, redisPort, authenticatorPort, userPort)
 
 	resolver := resolver.NewResolver(authInteractor)
 

@@ -32,15 +32,15 @@ clean:
 
 unit_test:
 	@echo "Running unit tests..."
-	@go test ./... -v
+	@go test ./...
 
 race_test:
 	@echo "Running race condition tests..."
-	@go test ./... -v -race
+	@go test ./... -race
 
 integration_test:
 	@echo "Running integration tests..."
-	@go test -tags=integration ./... -v
+	@go test -tags=integration ./...
 
 test: unit_test race_test
 

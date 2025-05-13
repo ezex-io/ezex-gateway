@@ -33,38 +33,51 @@ func (u *Users) Close() error {
 	return u.conn.Close()
 }
 
-func (u *Users) ProcessFirebaseLogin(ctx context.Context, email, firebaseUID string) (string, error) {
-	resp, err := u.usersClient.ProcessFirebaseLogin(ctx, &client.ProcessFirebaseLoginRequest{
-		Email:          email,
-		FirebaseUserId: firebaseUID,
+func (u *Users) ProcessLogin(ctx context.Context, req *port.ProcessLoginRequest) (
+	*port.ProcessLoginResponse, error,
+) {
+	res, err := u.usersClient.ProcessFirebaseLogin(ctx, &client.ProcessFirebaseLoginRequest{
+		Email:          req.Email,
+		FirebaseUserId: req.FirebaseUID,
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return resp.UserId, nil
+	return &port.ProcessLoginResponse{
+		UserID: res.UserId,
+	}, nil
 }
 
-func (u *Users) SaveSecurityImage(ctx context.Context, email, securityImage, securityPhrase string) error {
+func (u *Users) SaveSecurityImage(ctx context.Context, req *port.SaveSecurityImageRequest) (
+	*port.SaveSecurityImageResponse, error,
+) {
 	_, err := u.usersClient.SaveSecurityImage(ctx, &client.SaveSecurityImageRequest{
-		Email:          email,
-		SecurityImage:  securityImage,
-		SecurityPhrase: securityPhrase,
+		Email:          req.Email,
+		SecurityImage:  req.Image,
+		SecurityPhrase: req.Phrase,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &port.SaveSecurityImageResponse{
+		Email: req.Email,
+	}, nil
 }
 
-func (u *Users) GetSecurityImage(ctx context.Context, email string) (image string, phrase string, err error) {
-	resp, err := u.usersClient.GetSecurityImage(ctx, &client.GetSecurityImageRequest{
-		Email: email,
+func (u *Users) GetSecurityImage(ctx context.Context, req *port.GetSecurityImageRequest) (
+	*port.GetSecurityImageResponse, error,
+) {
+	res, err := u.usersClient.GetSecurityImage(ctx, &client.GetSecurityImageRequest{
+		Email: req.Email,
 	})
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 
-	return resp.SecurityImage, resp.SecurityPhrase, nil
+	return &port.GetSecurityImageResponse{
+		Image:  res.SecurityImage,
+		Phrase: res.SecurityPhrase,
+	}, nil
 }

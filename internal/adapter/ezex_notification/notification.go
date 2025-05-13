@@ -32,18 +32,18 @@ func (a *Notification) Close() error {
 	return a.conn.Close()
 }
 
-func (a *Notification) SendEmail(ctx context.Context, recipient, subject, template string,
-	fields map[string]string,
-) error {
+func (a *Notification) SendEmail(ctx context.Context, req *port.SendEmailRequest) (*port.SendEmailResponse, error) {
 	_, err := a.notificationClient.SendEmail(ctx, &client.SendEmailRequest{
-		Recipient:      recipient,
-		Subject:        subject,
-		TemplateName:   template,
-		TemplateFields: fields,
+		Recipient:      req.Recipient,
+		Subject:        req.Subject,
+		TemplateName:   req.Template,
+		TemplateFields: req.Fields,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &port.SendEmailResponse{
+		Recipient: req.Recipient,
+	}, nil
 }

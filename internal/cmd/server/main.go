@@ -9,6 +9,8 @@ import (
 	"syscall"
 
 	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_users"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/firebase"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/resolver"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
@@ -29,39 +31,44 @@ func main() {
 		logging.Debug("Failed to load env file '%s': %v. Continuing with system environment...", *envFile, err)
 	}
 
-	cfg, err := makeConfig()
-	if err != nil {
-		logging.Fatal(err.Error())
-	}
+	cfg := makeConfig()
 	logging.Info("successfully loaded config", "debug", cfg.Debug)
 
 	if cfg.Debug {
 		logging = logger.NewSlog(logger.WithTextHandler(os.Stdout, slog.LevelDebug))
 	}
 
-	redisPort, err := redis.New(cfg.RedisAdapterConfig)
+	redisPort, err := redis.New(cfg.Redis)
 	if err != nil {
-		logging.Error(err.Error())
-		os.Exit(1)
+		logging.Fatal(err.Error())
 	}
 	logging.Info("initialized redis adapter")
 
-	notificationPort, err := ezex_notification.New(cfg.NotificationAdapterConfig)
+	firebasePort, err := firebase.New(context.Background(), cfg.Firebase)
 	if err != nil {
-		logging.Error(err.Error())
-		os.Exit(1)
+		logging.Fatal(err.Error())
+	}
+
+	notificationPort, err := ezex_notification.New(cfg.Notification)
+	if err != nil {
+		logging.Fatal(err.Error())
+	}
+
+	userPort, err := ezex_users.New(cfg.User)
+	if err != nil {
+		logging.Fatal(err.Error())
 	}
 
 	logging.Info("initialized notification service adapter")
 
-	authInteractor := auth.NewAuth(cfg.AuthInteractorConfig, logging, notificationPort, redisPort)
+	authInteractor := auth.NewAuth(cfg.AuthInteractor, logging, notificationPort, redisPort, firebasePort, userPort)
 
 	resolver := resolver.NewResolver(authInteractor)
 
-	gql := graphql.New(cfg.GraphqlConfig, resolver, logging, mdl.Recover())
+	gql := graphql.New(cfg.Graphql, resolver, logging, mdl.Recover())
 
 	gql.Start()
-	logging.Info("graphql server started", "addr", cfg.GraphqlConfig.Address)
+	logging.Info("graphql server started", "addr", cfg.Graphql.Address)
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)

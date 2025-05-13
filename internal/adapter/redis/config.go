@@ -17,8 +17,8 @@ type Config struct {
 	Protocol     int
 }
 
-func LoadFromEnv() (*Config, error) {
-	config := &Config{
+func LoadFromEnv() *Config {
+	return &Config{
 		Address:      env.GetEnv[string]("EZEX_GATEWAY_REDIS_ADDRESS", env.WithDefault("localhost:6379")),
 		DB:           env.GetEnv[int]("EZEX_GATEWAY_REDIS_DB", env.WithDefault("0")),
 		Password:     env.GetEnv[string]("EZEX_GATEWAY_REDIS_PASSWORD"),
@@ -28,8 +28,6 @@ func LoadFromEnv() (*Config, error) {
 		PoolSize:     env.GetEnv[int]("EZEX_GATEWAY_REDIS_POOL_SIZE", env.WithDefault("10")),
 		Protocol:     env.GetEnv[int]("EZEX_GATEWAY_REDIS_PROTOCOL", env.WithDefault("3")),
 	}
-
-	return config, nil
 }
 
 func (*Config) BasicCheck() error {

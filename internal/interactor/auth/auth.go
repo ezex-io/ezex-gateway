@@ -2,17 +2,21 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
+	"github.com/ezex-io/ezex-gateway/internal/entity"
 	"github.com/ezex-io/ezex-gateway/internal/port"
 	"github.com/ezex-io/ezex-gateway/internal/utils"
-	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
 	"github.com/ezex-io/gopkg/logger"
 )
 
 type Auth struct {
 	notificationPort port.NotificationPort
+	usersPort        port.UserPort
 	redisPort        port.CachePort
+	firebasePort     port.FirebasePort
 
 	cfg     *Config
 	logging logger.Logger
@@ -20,10 +24,14 @@ type Auth struct {
 
 func NewAuth(cfg *Config, logging logger.Logger,
 	notificationPort port.NotificationPort, redisPort port.CachePort,
+	firebasePort port.FirebasePort,
+	usersPort port.UserPort,
 ) *Auth {
 	return &Auth{
 		notificationPort: notificationPort,
+		usersPort:        usersPort,
 		redisPort:        redisPort,
+		firebasePort:     firebasePort,
 		cfg:              cfg,
 		logging:          logging,
 	}
@@ -73,4 +81,42 @@ func (a *Auth) VerifyConfirmationCode(ctx context.Context, recipient, code strin
 	}()
 
 	return nil
+}
+
+func (a *Auth) ProcessFirebaseLogin(ctx context.Context, idToken string) (string, error) {
+	token, err := a.firebasePort.VerifyIDToken(ctx, idToken)
+	if err != nil {
+		return "", err
+	}
+
+	firebaseUID := token.UID
+	email, ok := token.Claims["email"]
+	if !ok {
+		return "", errors.New("no email claim found from firebase")
+	}
+
+	emailStr, ok := email.(string)
+	if !ok {
+		return "", errors.New("invalid email claim found from firebase")
+	}
+
+	return a.usersPort.ProcessFirebaseLogin(ctx, emailStr, firebaseUID)
+}
+
+func (a *Auth) SaveSecurityImage(ctx context.Context, req *entity.SaveSecurityImageReq) error {
+	return a.usersPort.SaveSecurityImage(ctx, req.Email, req.Image, req.Phrase)
+}
+
+func (a *Auth) GetSecurityImage(ctx context.Context,
+	req *entity.GetSecurityImageReq,
+) (*entity.GetSecurityImageResp, error) {
+	image, phrase, err := a.usersPort.GetSecurityImage(ctx, req.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.GetSecurityImageResp{
+		Image:  image,
+		Phrase: phrase,
+	}, nil
 }

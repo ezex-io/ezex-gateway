@@ -18,10 +18,11 @@ type Cors struct {
 	AllowCredentials bool
 }
 
-func LoadFromEnv() (*Config, error) {
-	config := &Config{
-		Address:   env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_ADDRESS", env.WithDefault("0.0.0.0:8080")),
-		QueryPath: env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_QUERY_PATH"),
+func LoadFromEnv() *Config {
+	return &Config{
+		Address:    env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_ADDRESS", env.WithDefault("0.0.0.0:8080")),
+		Playground: env.GetEnv[bool]("EZEX_GATEWAY_GRAPHQL_PLAYGROUND", env.WithDefault("false")),
+		QueryPath:  env.GetEnv[string]("EZEX_GATEWAY_GRAPHQL_QUERY_PATH"),
 		CORS: Cors{
 			AllowedOrigins:   env.GetEnv[[]string]("EZEX_GATEWAY_GRAPHQL_CORS_ALLOWED_ORIGINS"),
 			AllowedMethods:   env.GetEnv[[]string]("EZEX_GATEWAY_GRAPHQL_CORS_ALLOWED_METHODS"),
@@ -29,8 +30,6 @@ func LoadFromEnv() (*Config, error) {
 			AllowCredentials: env.GetEnv[bool]("EZEX_GATEWAY_GRAPHQL_CORS_ALLOW_CREDENTIALS", env.WithDefault("false")),
 		},
 	}
-
-	return config, nil
 }
 
 func (*Config) BasicCheck() error {

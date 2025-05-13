@@ -12,8 +12,8 @@ type Config struct {
 	ConfirmationCodeSubject  string
 }
 
-func LoadFromEnv() (*Config, error) {
-	config := &Config{
+func LoadFromEnv() *Config {
+	return &Config{
 		ConfirmationCodeTTL: env.GetEnv[time.Duration]("EZEX_GATEWAY_AUTH_CONFIRMATION_CODE_TTL",
 			env.WithDefault("5m")),
 		ConfirmationTemplateName: env.GetEnv[string]("EZEX_GATEWAY_AUTH_CONFIRMATION_TEMPLATE",
@@ -21,8 +21,6 @@ func LoadFromEnv() (*Config, error) {
 		ConfirmationCodeSubject: env.GetEnv[string]("EZEX_GATEWAY_AUTH_CONFIRMATION_SUBJECT",
 			env.WithDefault("ezeX Confirmation Code: %s")),
 	}
-
-	return config, nil
 }
 
 func (*Config) BasicCheck() error {

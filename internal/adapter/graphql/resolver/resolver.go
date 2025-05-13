@@ -1,8 +1,8 @@
 package resolver
 
 import (
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
-	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
 )
 
 type Resolver struct {

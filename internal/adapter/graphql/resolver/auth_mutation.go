@@ -3,7 +3,8 @@ package resolver
 import (
 	"context"
 
-	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
+	"github.com/ezex-io/ezex-gateway/internal/entity"
 )
 
 func (m *mutationResolver) SendConfirmationCode(ctx context.Context,
@@ -28,26 +29,46 @@ func (m *mutationResolver) VerifyConfirmationCode(ctx context.Context,
 	return &gen.VoidPayload{}, nil
 }
 
-func (*mutationResolver) SetSecurityImage(_ context.Context,
+func (m *mutationResolver) SetSecurityImage(ctx context.Context,
 	inp gen.SetSecurityImageInput,
-) (*gen.SetSecurityImagePayload, error) {
-	return &gen.SetSecurityImagePayload{
-		Email: inp.Email,
-	}, nil
+) (*gen.VoidPayload, error) {
+	err := m.auth.SaveSecurityImage(ctx, &entity.SaveSecurityImageReq{
+		Email:  inp.Email,
+		Image:  inp.Image,
+		Phrase: inp.Phrase,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &gen.VoidPayload{}, nil
 }
 
-func (*mutationResolver) GetSecurityImage(_ context.Context,
+func (m *mutationResolver) GetSecurityImage(ctx context.Context,
 	inp gen.GetSecurityImageInput,
 ) (*gen.GetSecurityImagePayload, error) {
+	resp, err := m.auth.GetSecurityImage(ctx, &entity.GetSecurityImageReq{
+		Email: inp.Email,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	return &gen.GetSecurityImagePayload{
-		Email:  inp.Email,
-		Image:  "moon.png",
-		Phrase: "Security phrase",
+		Image:  resp.Image,
+		Phrase: resp.Phrase,
 	}, nil
 }
 
-func (*mutationResolver) ProcessFirebaseAuth(_ context.Context,
-	_ gen.ProcessFirebaseAuthInput,
-) (*gen.VoidPayload, error) {
-	return &gen.VoidPayload{}, nil
+func (m *mutationResolver) ProcessFirebaseAuth(ctx context.Context,
+	inp gen.ProcessFirebaseAuthInput,
+) (*gen.ProcessFirebaseAuthPayload, error) {
+	userID, err := m.auth.ProcessFirebaseLogin(ctx, inp.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gen.ProcessFirebaseAuthPayload{
+		UserID: &userID,
+	}, nil
 }

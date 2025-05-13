@@ -20,7 +20,7 @@ func (r *mutationResolver) VerifyConfirmationCode(ctx context.Context, input Ver
 }
 
 // SetSecurityImage is the resolver for the setSecurityImage field.
-func (r *mutationResolver) SetSecurityImage(ctx context.Context, input SetSecurityImageInput) (*SetSecurityImagePayload, error) {
+func (r *mutationResolver) SetSecurityImage(ctx context.Context, input SetSecurityImageInput) (*VoidPayload, error) {
 	panic(fmt.Errorf("not implemented: SetSecurityImage - setSecurityImage"))
 }
 
@@ -30,7 +30,7 @@ func (r *mutationResolver) GetSecurityImage(ctx context.Context, input GetSecuri
 }
 
 // ProcessFirebaseAuth is the resolver for the processFirebaseAuth field.
-func (r *mutationResolver) ProcessFirebaseAuth(ctx context.Context, input ProcessFirebaseAuthInput) (*VoidPayload, error) {
+func (r *mutationResolver) ProcessFirebaseAuth(ctx context.Context, input ProcessFirebaseAuthInput) (*ProcessFirebaseAuthPayload, error) {
 	panic(fmt.Errorf("not implemented: ProcessFirebaseAuth - processFirebaseAuth"))
 }
 

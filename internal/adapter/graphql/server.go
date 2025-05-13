@@ -13,7 +13,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	ext "github.com/ezex-io/ezex-gateway/internal/adapter/graphql/extension"
-	gen "github.com/ezex-io/ezex-gateway/pkg/graphql"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
 	"github.com/ezex-io/gopkg/logger"
 	mdl "github.com/ezex-io/gopkg/middleware/http-mdl"
 	"github.com/vektah/gqlparser/v2/ast"

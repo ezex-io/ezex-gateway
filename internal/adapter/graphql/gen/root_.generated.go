@@ -42,7 +42,6 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	GetSecurityImagePayload struct {
-		Email  func(childComplexity int) int
 		Image  func(childComplexity int) int
 		Phrase func(childComplexity int) int
 	}
@@ -55,12 +54,12 @@ type ComplexityRoot struct {
 		VerifyConfirmationCode func(childComplexity int, input VerifyConfirmationCodeInput) int
 	}
 
-	Query struct {
-		Dummy func(childComplexity int) int
+	ProcessFirebaseAuthPayload struct {
+		UserID func(childComplexity int) int
 	}
 
-	SetSecurityImagePayload struct {
-		Email func(childComplexity int) int
+	Query struct {
+		Dummy func(childComplexity int) int
 	}
 
 	VoidPayload struct {
@@ -86,13 +85,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
-
-	case "GetSecurityImagePayload.email":
-		if e.complexity.GetSecurityImagePayload.Email == nil {
-			break
-		}
-
-		return e.complexity.GetSecurityImagePayload.Email(childComplexity), true
 
 	case "GetSecurityImagePayload.image":
 		if e.complexity.GetSecurityImagePayload.Image == nil {
@@ -168,19 +160,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.VerifyConfirmationCode(childComplexity, args["input"].(VerifyConfirmationCodeInput)), true
 
+	case "ProcessFirebaseAuthPayload.user_id":
+		if e.complexity.ProcessFirebaseAuthPayload.UserID == nil {
+			break
+		}
+
+		return e.complexity.ProcessFirebaseAuthPayload.UserID(childComplexity), true
+
 	case "Query._dummy":
 		if e.complexity.Query.Dummy == nil {
 			break
 		}
 
 		return e.complexity.Query.Dummy(childComplexity), true
-
-	case "SetSecurityImagePayload.email":
-		if e.complexity.SetSecurityImagePayload.Email == nil {
-			break
-		}
-
-		return e.complexity.SetSecurityImagePayload.Email(childComplexity), true
 
 	case "VoidPayload.ok":
 		if e.complexity.VoidPayload.Ok == nil {
@@ -299,7 +291,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../../graphql/auth.graphql", Input: `# ─────────────────────────────
+	{Name: "../../../../graphql/auth.graphql", Input: `# ─────────────────────────────
 # Enum
 # ─────────────────────────────
 
@@ -327,22 +319,21 @@ input SetSecurityImageInput {
   phrase: String!
 }
 
-type SetSecurityImagePayload {
-  email: String!
-}
-
 input GetSecurityImageInput {
   email: String!
 }
 
 type GetSecurityImagePayload {
-  email: String!
   image: String!
   phrase: String!
 }
 
 input ProcessFirebaseAuthInput {
   token: String!
+}
+
+type ProcessFirebaseAuthPayload {
+  user_id: String
 }
 
 # ─────────────────────────────
@@ -360,12 +351,12 @@ type Query {
 extend type Mutation {
   sendConfirmationCode(input: SendConfirmationCodeInput!): VoidPayload!
   verifyConfirmationCode(input: VerifyConfirmationCodeInput!): VoidPayload!
-  setSecurityImage(input: SetSecurityImageInput!):SetSecurityImagePayload!
+  setSecurityImage(input: SetSecurityImageInput!):VoidPayload!
   getSecurityImage(input: GetSecurityImageInput!):GetSecurityImagePayload!
-  processFirebaseAuth(input: ProcessFirebaseAuthInput!): VoidPayload!
+  processFirebaseAuth(input: ProcessFirebaseAuthInput!): ProcessFirebaseAuthPayload!
 }
 `, BuiltIn: false},
-	{Name: "../../graphql/common.graphql", Input: `# ─────────────────────────────
+	{Name: "../../../../graphql/common.graphql", Input: `# ─────────────────────────────
 # Directive mutation and query options
 # ─────────────────────────────
 

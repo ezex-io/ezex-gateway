@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_users"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/firebase"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
@@ -9,46 +11,29 @@ import (
 )
 
 type Config struct {
-	Debug                     bool
-	GraphqlConfig             *graphql.Config
-	AuthInteractorConfig      *auth.Config
-	NotificationAdapterConfig *ezex_notification.Config
-	RedisAdapterConfig        *redis.Config
+	Debug          bool
+	Graphql        *graphql.Config
+	AuthInteractor *auth.Config
+	Notification   *ezex_notification.Config
+	User           *ezex_users.Config
+	Redis          *redis.Config
+	Firebase       *firebase.Config
 }
 
-func makeConfig() (*Config, error) {
-	graphqlConfig, err := graphql.LoadFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	authConfig, err := auth.LoadFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	notificationConfig, err := ezex_notification.LoadFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	redisConfig, err := redis.LoadFromEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	// Initialize config with environment variables
+func makeConfig() *Config {
 	config := &Config{
-		Debug:                     env.GetEnv[bool]("EZEX_GATEWAY_DEBUG", env.WithDefault("false")),
-		GraphqlConfig:             graphqlConfig,
-		AuthInteractorConfig:      authConfig,
-		NotificationAdapterConfig: notificationConfig,
-		RedisAdapterConfig:        redisConfig,
+		Debug:          env.GetEnv[bool]("EZEX_GATEWAY_DEBUG", env.WithDefault("false")),
+		Graphql:        graphql.LoadFromEnv(),
+		AuthInteractor: auth.LoadFromEnv(),
+		Notification:   ezex_notification.LoadFromEnv(),
+		Redis:          redis.LoadFromEnv(),
+		Firebase:       firebase.LoadFromEnv(),
+		User:           ezex_users.LoadFromEnv(),
 	}
 
-	config.GraphqlConfig.Playground = config.Debug
+	config.Graphql.Playground = config.Debug
 
-	return config, nil
+	return config
 }
 
 func (*Config) BasicCheck() error {

@@ -13,7 +13,6 @@ type GetSecurityImageInput struct {
 }
 
 type GetSecurityImagePayload struct {
-	Email  string `json:"email"`
 	Image  string `json:"image"`
 	Phrase string `json:"phrase"`
 }
@@ -23,6 +22,10 @@ type Mutation struct {
 
 type ProcessFirebaseAuthInput struct {
 	Token string `json:"token"`
+}
+
+type ProcessFirebaseAuthPayload struct {
+	UserID *string `json:"user_id,omitempty"`
 }
 
 type Query struct {
@@ -37,10 +40,6 @@ type SetSecurityImageInput struct {
 	Email  string `json:"email"`
 	Image  string `json:"image"`
 	Phrase string `json:"phrase"`
-}
-
-type SetSecurityImagePayload struct {
-	Email string `json:"email"`
 }
 
 type VerifyConfirmationCodeInput struct {

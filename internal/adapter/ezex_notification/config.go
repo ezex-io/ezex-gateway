@@ -6,12 +6,10 @@ type Config struct {
 	Address string
 }
 
-func LoadFromEnv() (*Config, error) {
-	config := &Config{
+func LoadFromEnv() *Config {
+	return &Config{
 		Address: env.GetEnv[string]("EZEX_GATEWAY_NOTIFICATION_ADDRESS"),
 	}
-
-	return config, nil
 }
 
 func (*Config) BasicCheck() error {

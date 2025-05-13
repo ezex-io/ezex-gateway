@@ -3,17 +3,17 @@ schema:
 
 exec:
   layout: follow-schema
-  dir: pkg/graphql
+  dir: internal/adapter/graphql/gen
   filename_template: "{name}.gen.go"
   package: gen
 
 model:
-  filename: pkg/graphql/models.gen.go
+  filename: internal/adapter/graphql/gen/models.gen.go
   package: gen
 
 resolver:
   layout: follow-schema
-  dir: pkg/graphql
+  dir: internal/adapter/graphql/gen
   filename_template: "{name}.resolvers.gen.go"
   package: gen
 

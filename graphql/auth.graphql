@@ -26,22 +26,21 @@ input SetSecurityImageInput {
   phrase: String!
 }
 
-type SetSecurityImagePayload {
-  email: String!
-}
-
 input GetSecurityImageInput {
   email: String!
 }
 
 type GetSecurityImagePayload {
-  email: String!
   image: String!
   phrase: String!
 }
 
 input ProcessFirebaseAuthInput {
   token: String!
+}
+
+type ProcessFirebaseAuthPayload {
+  user_id: String
 }
 
 # ─────────────────────────────
@@ -59,7 +58,7 @@ type Query {
 extend type Mutation {
   sendConfirmationCode(input: SendConfirmationCodeInput!): VoidPayload!
   verifyConfirmationCode(input: VerifyConfirmationCodeInput!): VoidPayload!
-  setSecurityImage(input: SetSecurityImageInput!):SetSecurityImagePayload!
+  setSecurityImage(input: SetSecurityImageInput!):VoidPayload!
   getSecurityImage(input: GetSecurityImageInput!):GetSecurityImagePayload!
-  processFirebaseAuth(input: ProcessFirebaseAuthInput!): VoidPayload!
+  processFirebaseAuth(input: ProcessFirebaseAuthInput!): ProcessFirebaseAuthPayload!
 }

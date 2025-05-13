@@ -74,7 +74,6 @@ linters:
     - whitespace
     - zerologlint
     - varnamelen
-    - ireturn
 
 linters-settings:
   gosimple:

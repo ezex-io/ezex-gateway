@@ -10,14 +10,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
-
-	"github.com/ezex-io/gopkg/logger"
-
 	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 	"github.com/ezex-io/ezex-gateway/internal/port"
+	"github.com/ezex-io/gopkg/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

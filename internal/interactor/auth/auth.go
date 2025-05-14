@@ -13,7 +13,7 @@ import (
 
 type Auth struct {
 	notificationPort  port.NotificationPort
-	usersPort         port.UserPort
+	usersPort         port.UsersPort
 	redisPort         port.CachePort
 	authenticatorPort port.AuthenticatorPort
 
@@ -24,7 +24,7 @@ type Auth struct {
 func NewAuth(cfg *Config, logging logger.Logger,
 	notificationPort port.NotificationPort, redisPort port.CachePort,
 	authenticatorPort port.AuthenticatorPort,
-	usersPort port.UserPort,
+	usersPort port.UsersPort,
 ) *Auth {
 	return &Auth{
 		notificationPort:  notificationPort,
@@ -62,7 +62,7 @@ func (a *Auth) SendConfirmationCode(ctx context.Context, recipient string, metho
 
 		return a.redisPort.Set(ctx, recipient, code, port.CacheWithTTL(a.cfg.ConfirmationCodeTTL))
 	default:
-		return fmt.Errorf("unknown delivery method: %s", method)
+		return UnknownDeliveryMethodError{Method: method.String()}
 	}
 }
 
@@ -120,10 +120,5 @@ func (a *Auth) SaveSecurityImage(ctx context.Context, req *port.SaveSecurityImag
 func (a *Auth) GetSecurityImage(ctx context.Context,
 	req *port.GetSecurityImageRequest,
 ) (*port.GetSecurityImageResponse, error) {
-	res, err := a.usersPort.GetSecurityImage(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	return a.usersPort.GetSecurityImage(ctx, req)
 }

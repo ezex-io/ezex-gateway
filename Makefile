@@ -12,6 +12,12 @@ gen-graphql:
 docker:
 	docker build --tag ezex-gateway .
 
+mock:
+	mockgen -source=./internal/port/authenticator.go 	-destination=./internal/mock/mock_authenticator.go	-package=mock
+	mockgen -source=./internal/port/cache.go 			-destination=./internal/mock/mock_cache.go 			-package=mock
+	mockgen -source=./internal/port/notification.go 	-destination=./internal/mock/mock_notification.go 	-package=mock
+	mockgen -source=./internal/port/user.go 			-destination=./internal/mock/mock_user.go 			-package=mock
+
 ########################################
 ### Building
 
@@ -57,7 +63,7 @@ lint:
 
 check: fmt lint
 
-.PHONY: gen-graphql docker
+.PHONY: gen-graphql docker mock
 .PHONY: build release clean
 .PHONY: test unit_test race_test integration_test
 .PHONY: fmt lint check

@@ -32,7 +32,7 @@ type GetSecurityImageResponse struct {
 	Phrase string
 }
 
-type UserPort interface {
+type UsersPort interface {
 	ProcessLogin(ctx context.Context, req *ProcessLoginRequest) (*ProcessLoginResponse, error)
 	SaveSecurityImage(ctx context.Context, req *SaveSecurityImageRequest) (*SaveSecurityImageResponse, error)
 	GetSecurityImage(ctx context.Context, req *GetSecurityImageRequest) (*GetSecurityImageResponse, error)

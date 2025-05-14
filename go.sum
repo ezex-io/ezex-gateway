@@ -219,6 +219,8 @@ github.com/ezex-io/gopkg/logger v0.1.2 h1:q9y7d2Gj5DJFJ7pellZSpjSa4WSJm9B7yNxRPg
 github.com/ezex-io/gopkg/logger v0.1.2/go.mod h1:7f/HJZ9OkpWzCTNPhCYTCo6CMEEu5T61dU5u9fB1XE8=
 github.com/ezex-io/gopkg/middleware/http-mdl v0.1.0 h1:fZx4hDgKj9qNk7iXQKtpG5WsECJcZJpK9z46NktrFgM=
 github.com/ezex-io/gopkg/middleware/http-mdl v0.1.0/go.mod h1:S7ueQAGLnOb+QiAHf7l910Zg9VqrZ1cI4JqpZi7q0GM=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20250513173018-ef5b6cf3b0e5 h1:8pNB8T3LDZCdq7+wJbeU3TgjXoblYMXSZ0WvPcN8A9k=
+github.com/ezex-io/gopkg/testsuite v0.0.0-20250513173018-ef5b6cf3b0e5/go.mod h1:BfuZaknxidHp80STfmtTVMOyDoF+01dZ/wVqMDt/fV8=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
 github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
 github.com/fatih/structtag v1.2.0 h1:/OdNE99OxoI/PqaW/SuSK9uxxT3f/tcSZgon/ssNSx4=
@@ -743,6 +745,8 @@ go.uber.org/automaxprocs v1.6.0 h1:O3y2/QNTOdbF+e/dpXNNW7Rx2hZ4sTIPyybbxyNqTUs=
 go.uber.org/automaxprocs v1.6.0/go.mod h1:ifeIMSnPZuznNm6jmdzmU3/bfk01Fe2fotchwEFJ8r8=
 go.uber.org/goleak v1.1.11 h1:wy28qYRKZgnJTxGxvye5/wgWr1EKjmUDGYox5mGlRlI=
 go.uber.org/goleak v1.1.11/go.mod h1:cwTWslyiVhfpKIDGSZEM2HlOvcqm+tG4zioyIeLoqMQ=
+go.uber.org/mock v0.5.2 h1:LbtPTcP8A5k9WPXj54PPPbjcI4Y6lhyOZXn+VS7wNko=
+go.uber.org/mock v0.5.2/go.mod h1:wLlUxC2vVTPTaE3UD51E0BGOAElKrILxhVSDYQLld5o=
 go.uber.org/multierr v1.6.0 h1:y6IPFStTAIT5Ytl7/XYmHvzXQ7S3g/IeZW9hyZ5thw4=
 go.uber.org/multierr v1.6.0/go.mod h1:cdWPpRnG4AhwMwsgIHip0KRBQjJy5kYEpYjJxpXp9iU=
 go.uber.org/zap v1.24.0 h1:FiJd5l1UOLj0wCgbSE0rwwXHzEdAZS6hiiSnxJN/D60=

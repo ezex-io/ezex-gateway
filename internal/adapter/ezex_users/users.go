@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var _ port.UserPort = &Users{}
+var _ port.UsersPort = &Users{}
 
 type Users struct {
 	conn        *grpc.ClientConn

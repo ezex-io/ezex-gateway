@@ -3,19 +3,19 @@ schema:
 
 exec:
   layout: follow-schema
-  dir: internal/adapter/graphql/gen
+  dir: internal/adapter/graphql/gateway
   filename_template: "{name}.gen.go"
-  package: gen
+  package: gateway
 
 model:
-  filename: internal/adapter/graphql/gen/models.gen.go
-  package: gen
+  filename: internal/adapter/graphql/gateway/models.gen.go
+  package: gateway
 
 resolver:
   layout: follow-schema
-  dir: internal/adapter/graphql/gen
+  dir: internal/adapter/graphql/gateway
   filename_template: "{name}.resolvers.gen.go"
-  package: gen
+  package: gateway
 
 models:
   ID:

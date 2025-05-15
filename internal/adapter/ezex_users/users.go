@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/ezex-io/ezex-gateway/internal/port"
-	client "github.com/ezex-io/ezex-proto/go/users"
+	"github.com/ezex-io/ezex-proto/go/users"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -13,7 +13,7 @@ var _ port.UsersPort = &Users{}
 
 type Users struct {
 	conn        *grpc.ClientConn
-	usersClient client.UsersServiceClient
+	usersClient users.UsersServiceClient
 }
 
 func New(cfg *Config) (*Users, error) {
@@ -25,7 +25,7 @@ func New(cfg *Config) (*Users, error) {
 
 	return &Users{
 		conn:        conn,
-		usersClient: client.NewUsersServiceClient(conn),
+		usersClient: users.NewUsersServiceClient(conn),
 	}, nil
 }
 
@@ -33,51 +33,26 @@ func (u *Users) Close() error {
 	return u.conn.Close()
 }
 
-func (u *Users) ProcessLogin(ctx context.Context, req *port.ProcessLoginRequest) (
-	*port.ProcessLoginResponse, error,
+func (u *Users) CreateUser(ctx context.Context, req *users.CreateUserRequest) (
+	*users.CreateUserResponse, error,
 ) {
-	res, err := u.usersClient.ProcessFirebaseLogin(ctx, &client.ProcessFirebaseLoginRequest{
-		Email:          req.Email,
-		FirebaseUserId: req.FirebaseUID,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &port.ProcessLoginResponse{
-		UserID: res.UserId,
-	}, nil
+	return u.usersClient.CreateUser(ctx, req)
 }
 
-func (u *Users) SaveSecurityImage(ctx context.Context, req *port.SaveSecurityImageRequest) (
-	*port.SaveSecurityImageResponse, error,
+func (u *Users) GetUserByEmail(ctx context.Context, req *users.GetUserByEmailRequest) (
+	*users.GetUserByEmailResponse, error,
 ) {
-	_, err := u.usersClient.SaveSecurityImage(ctx, &client.SaveSecurityImageRequest{
-		Email:          req.Email,
-		SecurityImage:  req.Image,
-		SecurityPhrase: req.Phrase,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &port.SaveSecurityImageResponse{
-		Email: req.Email,
-	}, nil
+	return u.usersClient.GetUserByEmail(ctx, req)
 }
 
-func (u *Users) GetSecurityImage(ctx context.Context, req *port.GetSecurityImageRequest) (
-	*port.GetSecurityImageResponse, error,
+func (u *Users) SaveSecurityImage(ctx context.Context, req *users.SaveSecurityImageRequest) (
+	*users.SaveSecurityImageResponse, error,
 ) {
-	res, err := u.usersClient.GetSecurityImage(ctx, &client.GetSecurityImageRequest{
-		Email: req.Email,
-	})
-	if err != nil {
-		return nil, err
-	}
+	return u.usersClient.SaveSecurityImage(ctx, req)
+}
 
-	return &port.GetSecurityImageResponse{
-		Image:  res.SecurityImage,
-		Phrase: res.SecurityPhrase,
-	}, nil
+func (u *Users) GetSecurityImage(ctx context.Context, req *users.GetSecurityImageRequest) (
+	*users.GetSecurityImageResponse, error,
+) {
+	return u.usersClient.GetSecurityImage(ctx, req)
 }

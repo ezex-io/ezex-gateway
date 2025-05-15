@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gateway"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 )
 
@@ -15,11 +15,11 @@ func NewResolver(auth *auth.Auth) *Resolver {
 	}
 }
 
-func (r *Resolver) Mutation() gen.MutationResolver { //nolint:ireturn // TODO: fix the linter if possible
+func (r *Resolver) Mutation() gateway.MutationResolver { //nolint:ireturn // TODO: fix the linter if possible
 	return &mutationResolver{r}
 }
 
-func (r *Resolver) Query() gen.QueryResolver { //nolint:ireturn // TODO: fix the linter if possible
+func (r *Resolver) Query() gateway.QueryResolver { //nolint:ireturn // TODO: fix the linter if possible
 	return &queryResolver{r}
 }
 

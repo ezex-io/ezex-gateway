@@ -9,7 +9,7 @@ type Config struct {
 
 func LoadFromEnv() *Config {
 	return &Config{
-		APIKey:    env.GetEnv[string]("EZEX_GATEWAY_FIREBASE_APIKEY"),
+		APIKey:    env.GetEnv[string]("EZEX_GATEWAY_FIREBASE_API_KEY"),
 		ProjectID: env.GetEnv[string]("EZEX_GATEWAY_FIREBASE_PROJECT_ID"),
 	}
 }

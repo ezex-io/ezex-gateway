@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
-	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/redis"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 	"github.com/ezex-io/ezex-gateway/internal/port"

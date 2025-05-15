@@ -5,7 +5,7 @@ CMD_DIR = ./internal/cmd/server
 ########################################
 ### Targets needed for development
 
-gen-graphql:
+graphql:
 	@echo "Generating graphql code..."
 	@go tool gqlgen generate ./...
 
@@ -16,7 +16,7 @@ mock:
 	mockgen -source=./internal/port/authenticator.go 	-destination=./internal/mock/mock_authenticator.go	-package=mock
 	mockgen -source=./internal/port/cache.go 			-destination=./internal/mock/mock_cache.go 			-package=mock
 	mockgen -source=./internal/port/notification.go 	-destination=./internal/mock/mock_notification.go 	-package=mock
-	mockgen -source=./internal/port/user.go 			-destination=./internal/mock/mock_user.go 			-package=mock
+	mockgen -source=./internal/port/users.go 			-destination=./internal/mock/mock_users.go 			-package=mock
 
 ########################################
 ### Building
@@ -48,7 +48,7 @@ integration_test:
 	@echo "Running integration tests..."
 	@go test -tags=integration ./...
 
-test: unit_test race_test
+test: unit_test
 
 ########################################
 ### Formatting the code
@@ -63,7 +63,7 @@ lint:
 
 check: fmt lint
 
-.PHONY: gen-graphql docker mock
+.PHONY: graphql docker mock
 .PHONY: build release clean
 .PHONY: test unit_test race_test integration_test
 .PHONY: fmt lint check

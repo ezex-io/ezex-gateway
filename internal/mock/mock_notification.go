@@ -13,7 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	port "github.com/ezex-io/ezex-gateway/internal/port"
+	notification "github.com/ezex-io/ezex-proto/go/notification"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -41,17 +41,17 @@ func (m *MockNotificationPort) EXPECT() *MockNotificationPortMockRecorder {
 	return m.recorder
 }
 
-// SendEmail mocks base method.
-func (m *MockNotificationPort) SendEmail(ctx context.Context, req *port.SendEmailRequest) (*port.SendEmailResponse, error) {
+// SendTemplatedEmail mocks base method.
+func (m *MockNotificationPort) SendTemplatedEmail(ctx context.Context, req *notification.SendTemplatedEmailRequest) (*notification.SendTemplatedEmailResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendEmail", ctx, req)
-	ret0, _ := ret[0].(*port.SendEmailResponse)
+	ret := m.ctrl.Call(m, "SendTemplatedEmail", ctx, req)
+	ret0, _ := ret[0].(*notification.SendTemplatedEmailResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SendEmail indicates an expected call of SendEmail.
-func (mr *MockNotificationPortMockRecorder) SendEmail(ctx, req any) *gomock.Call {
+// SendTemplatedEmail indicates an expected call of SendTemplatedEmail.
+func (mr *MockNotificationPortMockRecorder) SendTemplatedEmail(ctx, req any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendEmail", reflect.TypeOf((*MockNotificationPort)(nil).SendEmail), ctx, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendTemplatedEmail", reflect.TypeOf((*MockNotificationPort)(nil).SendTemplatedEmail), ctx, req)
 }

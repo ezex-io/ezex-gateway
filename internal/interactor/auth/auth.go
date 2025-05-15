@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gateway"
 	"github.com/ezex-io/ezex-gateway/internal/port"
 	"github.com/ezex-io/ezex-gateway/internal/utils"
+	"github.com/ezex-io/ezex-proto/go/notification"
+	"github.com/ezex-io/ezex-proto/go/users"
 	"github.com/ezex-io/gopkg/logger"
 )
 
@@ -36,60 +38,74 @@ func NewAuth(cfg *Config, logging logger.Logger,
 	}
 }
 
-func (a *Auth) SendConfirmationCode(ctx context.Context, recipient string, method gen.DeliveryMethod) error {
-	ok, err := a.redisPort.Exists(ctx, recipient)
+func (a *Auth) SendConfirmationCode(ctx context.Context, inp *gateway.SendConfirmationCodeInput) (
+	*gateway.SendConfirmationCodePayload, error,
+) {
+	ok, err := a.redisPort.Exists(ctx, inp.Recipient)
 	if ok && err == nil {
-		return ErrConfirmationCodeAlreadySent
+		return nil, ErrConfirmationCodeAlreadySent
 	}
 
 	code := utils.GenerateRandomCode(6)
 
-	switch method {
-	case gen.DeliveryMethodEmail:
-		req := &port.SendEmailRequest{
-			Recipient: recipient,
-			Subject:   fmt.Sprintf(a.cfg.ConfirmationCodeSubject, code),
-			Template:  a.cfg.ConfirmationTemplateName,
-			Fields: map[string]string{
+	switch inp.Method {
+	case gateway.DeliveryMethodEmail:
+		req := &notification.SendTemplatedEmailRequest{
+			Recipient:    inp.Recipient,
+			Subject:      fmt.Sprintf(a.cfg.ConfirmationCodeSubject, code),
+			TemplateName: a.cfg.ConfirmationTemplateName,
+			TemplateFields: map[string]string{
 				"Code": code,
 			},
 		}
 
-		_, err := a.notificationPort.SendEmail(ctx, req)
+		res, err := a.notificationPort.SendTemplatedEmail(ctx, req)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		return a.redisPort.Set(ctx, recipient, code, port.CacheWithTTL(a.cfg.ConfirmationCodeTTL))
+		err = a.redisPort.Set(ctx, inp.Recipient, code, port.CacheWithTTL(a.cfg.ConfirmationCodeTTL))
+		if err != nil {
+			return nil, err
+		}
+
+		return &gateway.SendConfirmationCodePayload{
+			Recipient: res.Recipient,
+		}, nil
+
 	default:
-		return UnknownDeliveryMethodError{Method: method.String()}
+		return nil, UnknownDeliveryMethodError{Method: inp.Method}
 	}
 }
 
-func (a *Auth) VerifyConfirmationCode(ctx context.Context, recipient, code string) error {
-	v, err := a.redisPort.Get(ctx, recipient)
-	if err != nil {
-		return ErrConfirmationCodeExpired
-	}
-
-	if v != code {
-		return ErrConfirmationCodeIsInvalid
-	}
-
-	if err := a.redisPort.Del(ctx, recipient); err != nil {
-		a.logging.Error("failed to delete recipient confirmation code from redis",
-			"recipient", recipient, "err", err)
-	}
-
-	return nil
-}
-
-func (a *Auth) ProcessLogin(ctx context.Context, req *port.VerifyIDTokenRequest) (
-	*port.ProcessLoginResponse, error,
+func (a *Auth) VerifyConfirmationCode(ctx context.Context, inp *gateway.VerifyConfirmationCodeInput) (
+	*gateway.VerifyConfirmationCodePayload, error,
 ) {
-	// TODO: A little bit Strange to me. @Javad Please double check.
+	v, err := a.redisPort.Get(ctx, inp.Recipient)
+	if err != nil {
+		return nil, ErrConfirmationCodeExpired
+	}
 
-	verifyRes, err := a.authenticatorPort.VerifyIDToken(ctx, req)
+	if v != inp.Code {
+		return nil, ErrConfirmationCodeIsInvalid
+	}
+
+	if err := a.redisPort.Del(ctx, inp.Recipient); err != nil {
+		a.logging.Error("failed to delete recipient confirmation code from redis",
+			"recipient", inp.Recipient, "err", err)
+	}
+
+	return &gateway.VerifyConfirmationCodePayload{
+		Recipient: inp.Recipient,
+	}, nil
+}
+
+func (a *Auth) ProcessAuthToken(ctx context.Context, inp *gateway.ProcessAuthTokenInput) (
+	*gateway.ProcessAuthTokenPayload, error,
+) {
+	verifyRes, err := a.authenticatorPort.VerifyIDToken(ctx, &port.VerifyIDTokenRequest{
+		IDToken: inp.IDToken,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -105,20 +121,51 @@ func (a *Auth) ProcessLogin(ctx context.Context, req *port.VerifyIDTokenRequest)
 		return nil, errors.New("invalid email claim found from firebase")
 	}
 
-	return a.usersPort.ProcessLogin(ctx, &port.ProcessLoginRequest{
+	res, err := a.usersPort.CreateUser(ctx, &users.CreateUserRequest{
 		Email:       emailStr,
-		FirebaseUID: firebaseUID,
+		FirebaseUid: firebaseUID,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &gateway.ProcessAuthTokenPayload{
+		UserID: res.UserId,
+	}, nil
 }
 
-func (a *Auth) SaveSecurityImage(ctx context.Context, req *port.SaveSecurityImageRequest) (
-	*port.SaveSecurityImageResponse, error,
+func (a *Auth) SaveSecurityImage(ctx context.Context, inp *gateway.SaveSecurityImageInput) (
+	*gateway.SaveSecurityImagePayload, error,
 ) {
-	return a.usersPort.SaveSecurityImage(ctx, req)
+	req := &users.SaveSecurityImageRequest{
+		Email:          inp.Email,
+		SecurityImage:  inp.SecurityImage,
+		SecurityPhrase: inp.SecurityPhrase,
+	}
+	res, err := a.usersPort.SaveSecurityImage(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gateway.SaveSecurityImagePayload{
+		Email: res.Email,
+	}, nil
 }
 
 func (a *Auth) GetSecurityImage(ctx context.Context,
-	req *port.GetSecurityImageRequest,
-) (*port.GetSecurityImageResponse, error) {
-	return a.usersPort.GetSecurityImage(ctx, req)
+	inp *gateway.GetSecurityImageInput,
+) (*gateway.GetSecurityImagePayload, error) {
+	req := &users.GetSecurityImageRequest{
+		Email: inp.Email,
+	}
+	res, err := a.usersPort.GetSecurityImage(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gateway.GetSecurityImagePayload{
+		Email:          res.Email,
+		SecurityImage:  res.SecurityImage,
+		SecurityPhrase: res.SecurityPhrase,
+	}, nil
 }

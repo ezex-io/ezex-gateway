@@ -2,38 +2,13 @@ package port
 
 import (
 	"context"
+
+	"github.com/ezex-io/ezex-proto/go/users"
 )
 
-type ProcessLoginRequest struct {
-	Email       string
-	FirebaseUID string
-}
-
-type ProcessLoginResponse struct {
-	UserID string
-}
-
-type SaveSecurityImageRequest struct {
-	Email  string
-	Image  string
-	Phrase string
-}
-
-type SaveSecurityImageResponse struct {
-	Email string
-}
-
-type GetSecurityImageRequest struct {
-	Email string
-}
-
-type GetSecurityImageResponse struct {
-	Image  string
-	Phrase string
-}
-
 type UsersPort interface {
-	ProcessLogin(ctx context.Context, req *ProcessLoginRequest) (*ProcessLoginResponse, error)
-	SaveSecurityImage(ctx context.Context, req *SaveSecurityImageRequest) (*SaveSecurityImageResponse, error)
-	GetSecurityImage(ctx context.Context, req *GetSecurityImageRequest) (*GetSecurityImageResponse, error)
+	CreateUser(ctx context.Context, req *users.CreateUserRequest) (*users.CreateUserResponse, error)
+	GetUserByEmail(ctx context.Context, req *users.GetUserByEmailRequest) (*users.GetUserByEmailResponse, error)
+	SaveSecurityImage(ctx context.Context, req *users.SaveSecurityImageRequest) (*users.SaveSecurityImageResponse, error)
+	GetSecurityImage(ctx context.Context, req *users.GetSecurityImageRequest) (*users.GetSecurityImageResponse, error)
 }

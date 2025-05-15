@@ -13,7 +13,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	ext "github.com/ezex-io/ezex-gateway/internal/adapter/graphql/extension"
-	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gateway"
 	"github.com/ezex-io/gopkg/logger"
 	mdl "github.com/ezex-io/gopkg/middleware/http-mdl"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -24,12 +24,12 @@ type Server struct {
 	errCh chan error
 }
 
-func New(cfg *Config, resolver gen.ResolverRoot, logging logger.Logger,
+func New(cfg *Config, resolver gateway.ResolverRoot, logging logger.Logger,
 	middlewares ...mdl.Middleware,
 ) *Server {
 	mux := http.NewServeMux()
 
-	graphSrv := handler.New(gen.NewExecutableSchema(gen.Config{
+	graphSrv := handler.New(gateway.NewExecutableSchema(gateway.Config{
 		Resolvers: resolver,
 	}))
 

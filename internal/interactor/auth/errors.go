@@ -3,6 +3,8 @@ package auth
 import (
 	"errors"
 	"fmt"
+
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gateway"
 )
 
 var (
@@ -12,7 +14,7 @@ var (
 )
 
 type UnknownDeliveryMethodError struct {
-	Method string // TODO: should be same enum as GraphQL definition
+	Method gateway.DeliveryMethod
 }
 
 func (e UnknownDeliveryMethodError) Error() string {

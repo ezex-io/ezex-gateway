@@ -6,10 +6,12 @@ import (
 	"time"
 
 	gauth "firebase.google.com/go/v4/auth"
-	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gen"
+	"github.com/ezex-io/ezex-gateway/internal/adapter/graphql/gateway"
 	"github.com/ezex-io/ezex-gateway/internal/interactor/auth"
 	"github.com/ezex-io/ezex-gateway/internal/mock"
 	"github.com/ezex-io/ezex-gateway/internal/port"
+	"github.com/ezex-io/ezex-proto/go/notification"
+	"github.com/ezex-io/ezex-proto/go/users"
 	"github.com/ezex-io/gopkg/testsuite"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -22,7 +24,7 @@ func TestSendConfirmationCode(t *testing.T) {
 
 	mockNotification := mock.NewMockNotificationPort(ctrl)
 	mockRedis := mock.NewMockCachePort(ctrl)
-	mockUsers := mock.NewMockUserPort(ctrl)
+	mockUsers := mock.NewMockUsersPort(ctrl)
 	mockAuth := mock.NewMockAuthenticatorPort(ctrl)
 
 	cfg := &auth.Config{
@@ -44,11 +46,18 @@ func TestSendConfirmationCode(t *testing.T) {
 		recipient := "test@example.com"
 
 		mockRedis.EXPECT().Exists(ctx, recipient).Return(false, nil)
-		mockNotification.EXPECT().SendEmail(ctx, gomock.Any()).Return(&port.SendEmailResponse{}, nil)
+		mockNotification.EXPECT().SendTemplatedEmail(ctx, gomock.Any()).Return(
+			&notification.SendTemplatedEmailResponse{
+				Recipient: recipient,
+			}, nil)
 		mockRedis.EXPECT().Set(ctx, recipient, gomock.Any(), gomock.Any()).Return(nil)
 
-		err := authInteractor.SendConfirmationCode(ctx, recipient, gen.DeliveryMethodEmail)
+		pld, err := authInteractor.SendConfirmationCode(ctx, &gateway.SendConfirmationCodeInput{
+			Method:    gateway.DeliveryMethodEmail,
+			Recipient: recipient,
+		})
 		assert.NoError(t, err)
+		assert.Equal(t, recipient, pld.Recipient)
 	})
 
 	t.Run("code already sent", func(t *testing.T) {
@@ -56,7 +65,10 @@ func TestSendConfirmationCode(t *testing.T) {
 
 		mockRedis.EXPECT().Exists(ctx, recipient).Return(true, nil)
 
-		err := authInteractor.SendConfirmationCode(ctx, recipient, gen.DeliveryMethodEmail)
+		_, err := authInteractor.SendConfirmationCode(ctx, &gateway.SendConfirmationCodeInput{
+			Method:    gateway.DeliveryMethodEmail,
+			Recipient: recipient,
+		})
 		assert.Equal(t, auth.ErrConfirmationCodeAlreadySent, err)
 	})
 
@@ -65,7 +77,10 @@ func TestSendConfirmationCode(t *testing.T) {
 
 		mockRedis.EXPECT().Exists(ctx, recipient).Return(false, nil)
 
-		err := authInteractor.SendConfirmationCode(ctx, recipient, "invalid-method")
+		_, err := authInteractor.SendConfirmationCode(ctx, &gateway.SendConfirmationCodeInput{
+			Method:    "invalid-method",
+			Recipient: recipient,
+		})
 		assert.ErrorIs(t, err, auth.UnknownDeliveryMethodError{Method: "invalid-method"})
 	})
 
@@ -73,9 +88,13 @@ func TestSendConfirmationCode(t *testing.T) {
 		recipient := "test@example.com"
 
 		mockRedis.EXPECT().Exists(ctx, recipient).Return(false, nil)
-		mockNotification.EXPECT().SendEmail(ctx, gomock.Any()).Return(nil, errors.New("send failed"))
+		mockNotification.EXPECT().SendTemplatedEmail(ctx, gomock.Any()).Return(nil,
+			errors.New("send failed"))
 
-		err := authInteractor.SendConfirmationCode(ctx, recipient, gen.DeliveryMethodEmail)
+		_, err := authInteractor.SendConfirmationCode(ctx, &gateway.SendConfirmationCodeInput{
+			Method:    gateway.DeliveryMethodEmail,
+			Recipient: recipient,
+		})
 		assert.Error(t, err)
 	})
 
@@ -83,10 +102,14 @@ func TestSendConfirmationCode(t *testing.T) {
 		recipient := "test@example.com"
 
 		mockRedis.EXPECT().Exists(ctx, recipient).Return(false, nil)
-		mockNotification.EXPECT().SendEmail(ctx, gomock.Any()).Return(&port.SendEmailResponse{}, nil)
+		mockNotification.EXPECT().SendTemplatedEmail(ctx, gomock.Any()).Return(
+			&notification.SendTemplatedEmailResponse{}, nil)
 		mockRedis.EXPECT().Set(ctx, recipient, gomock.Any(), gomock.Any()).Return(errors.New("redis error"))
 
-		err := authInteractor.SendConfirmationCode(ctx, recipient, gen.DeliveryMethodEmail)
+		_, err := authInteractor.SendConfirmationCode(ctx, &gateway.SendConfirmationCodeInput{
+			Method:    gateway.DeliveryMethodEmail,
+			Recipient: recipient,
+		})
 		assert.Error(t, err)
 	})
 }
@@ -114,8 +137,12 @@ func TestVerifyConfirmationCode(t *testing.T) {
 		mockRedis.EXPECT().Get(ctx, recipient).Return(code, nil)
 		mockRedis.EXPECT().Del(ctx, recipient).Return(nil)
 
-		err := authInteractor.VerifyConfirmationCode(ctx, recipient, code)
+		pld, err := authInteractor.VerifyConfirmationCode(ctx, &gateway.VerifyConfirmationCodeInput{
+			Recipient: recipient,
+			Code:      code,
+		})
 		assert.NoError(t, err)
+		assert.Equal(t, recipient, pld.Recipient)
 	})
 
 	t.Run("code expired", func(t *testing.T) {
@@ -123,7 +150,10 @@ func TestVerifyConfirmationCode(t *testing.T) {
 
 		mockRedis.EXPECT().Get(ctx, recipient).Return("", errors.New("not found"))
 
-		err := authInteractor.VerifyConfirmationCode(ctx, recipient, "123456")
+		_, err := authInteractor.VerifyConfirmationCode(ctx, &gateway.VerifyConfirmationCodeInput{
+			Recipient: recipient,
+			Code:      ts.RandString(6),
+		})
 		assert.ErrorIs(t, err, auth.ErrConfirmationCodeExpired)
 	})
 
@@ -132,7 +162,11 @@ func TestVerifyConfirmationCode(t *testing.T) {
 
 		mockRedis.EXPECT().Get(ctx, recipient).Return("654321", nil)
 
-		err := authInteractor.VerifyConfirmationCode(ctx, recipient, "123456")
+		_, err := authInteractor.VerifyConfirmationCode(ctx,
+			&gateway.VerifyConfirmationCodeInput{
+				Recipient: recipient,
+				Code:      "123456",
+			})
 		assert.ErrorIs(t, err, auth.ErrConfirmationCodeIsInvalid)
 	})
 
@@ -143,20 +177,23 @@ func TestVerifyConfirmationCode(t *testing.T) {
 		mockRedis.EXPECT().Get(ctx, recipient).Return(code, nil)
 		mockRedis.EXPECT().Del(ctx, recipient).Return(errors.New("delete failed"))
 
-		err := authInteractor.VerifyConfirmationCode(ctx, recipient, code)
+		_, err := authInteractor.VerifyConfirmationCode(ctx, &gateway.VerifyConfirmationCodeInput{
+			Recipient: recipient,
+			Code:      code,
+		})
 		assert.NoError(t, err) // deletion failure shouldn't fail the operation
 	})
 }
 
-func TestProcessLogin(t *testing.T) {
+func TestProcessAuthToken(t *testing.T) {
 	ctx := t.Context()
 	ts := testsuite.NewTestSuite(t)
 	ctrl := gomock.NewController(t)
 
 	mockAuth := mock.NewMockAuthenticatorPort(ctrl)
-	mockUsers := mock.NewMockUserPort(ctrl)
+	mockUsers := mock.NewMockUsersPort(ctrl)
 
-	authInteractor := auth.NewAuth(
+	auth := auth.NewAuth(
 		&auth.Config{},
 		ts.TestLogger(),
 		nil, // notification not needed
@@ -165,11 +202,12 @@ func TestProcessLogin(t *testing.T) {
 		mockUsers,
 	)
 
-	t.Run("successful login", func(t *testing.T) {
-		req := &port.VerifyIDTokenRequest{IDToken: "test-token"}
-		expectedResponse := &port.ProcessLoginResponse{UserID: "123"}
+	t.Run("successful", func(t *testing.T) {
+		inp := &gateway.ProcessAuthTokenInput{IDToken: "test-token"}
 
-		mockAuth.EXPECT().VerifyIDToken(ctx, req).Return(&port.VerifyIDTokenResponse{
+		mockAuth.EXPECT().VerifyIDToken(ctx, &port.VerifyIDTokenRequest{
+			IDToken: inp.IDToken,
+		}).Return(&port.VerifyIDTokenResponse{
 			Token: &gauth.Token{
 				UID: "firebase-uid",
 				Claims: map[string]any{
@@ -177,45 +215,47 @@ func TestProcessLogin(t *testing.T) {
 				},
 			},
 		}, nil)
-		mockUsers.EXPECT().ProcessLogin(ctx, &port.ProcessLoginRequest{
+		mockUsers.EXPECT().CreateUser(ctx, &users.CreateUserRequest{
 			Email:       "test@example.com",
-			FirebaseUID: "firebase-uid",
-		}).Return(expectedResponse, nil)
+			FirebaseUid: "firebase-uid",
+		}).Return(&users.CreateUserResponse{
+			UserId: "user-id",
+		}, nil)
 
-		res, err := authInteractor.ProcessLogin(ctx, req)
+		pld, err := auth.ProcessAuthToken(ctx, inp)
 		assert.NoError(t, err)
-		assert.Equal(t, expectedResponse, res)
+		assert.Equal(t, "user-id", pld.UserID)
 	})
 
 	t.Run("token verification failure", func(t *testing.T) {
-		req := &port.VerifyIDTokenRequest{IDToken: "test-token"}
+		inp := &gateway.ProcessAuthTokenInput{IDToken: "test-token"}
 
-		mockAuth.EXPECT().VerifyIDToken(ctx, req).Return(nil, errors.New("invalid token"))
+		mockAuth.EXPECT().VerifyIDToken(ctx, gomock.Any()).Return(nil, errors.New("invalid token"))
 
-		res, err := authInteractor.ProcessLogin(ctx, req)
+		res, err := auth.ProcessAuthToken(ctx, inp)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("missing email claim", func(t *testing.T) {
-		req := &port.VerifyIDTokenRequest{IDToken: "test-token"}
+		inp := &gateway.ProcessAuthTokenInput{IDToken: "test-token"}
 
-		mockAuth.EXPECT().VerifyIDToken(ctx, req).Return(&port.VerifyIDTokenResponse{
+		mockAuth.EXPECT().VerifyIDToken(ctx, gomock.Any()).Return(&port.VerifyIDTokenResponse{
 			Token: &gauth.Token{
 				UID:    "firebase-uid",
 				Claims: map[string]any{},
 			},
 		}, nil)
 
-		res, err := authInteractor.ProcessLogin(ctx, req)
+		res, err := auth.ProcessAuthToken(ctx, inp)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("invalid email claim type", func(t *testing.T) {
-		req := &port.VerifyIDTokenRequest{IDToken: "test-token"}
+		inp := &gateway.ProcessAuthTokenInput{IDToken: "test-token"}
 
-		mockAuth.EXPECT().VerifyIDToken(ctx, req).Return(&port.VerifyIDTokenResponse{
+		mockAuth.EXPECT().VerifyIDToken(ctx, gomock.Any()).Return(&port.VerifyIDTokenResponse{
 			Token: &gauth.Token{
 				UID: "firebase-uid",
 				Claims: map[string]any{
@@ -224,15 +264,15 @@ func TestProcessLogin(t *testing.T) {
 			},
 		}, nil)
 
-		res, err := authInteractor.ProcessLogin(ctx, req)
+		res, err := auth.ProcessAuthToken(ctx, inp)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
-	t.Run("user process login failure", func(t *testing.T) {
-		req := &port.VerifyIDTokenRequest{IDToken: "test-token"}
+	t.Run("Create user failure", func(t *testing.T) {
+		inp := &gateway.ProcessAuthTokenInput{IDToken: "test-token"}
 
-		mockAuth.EXPECT().VerifyIDToken(ctx, req).Return(&port.VerifyIDTokenResponse{
+		mockAuth.EXPECT().VerifyIDToken(ctx, gomock.Any()).Return(&port.VerifyIDTokenResponse{
 			Token: &gauth.Token{
 				UID: "firebase-uid",
 				Claims: map[string]any{
@@ -240,9 +280,9 @@ func TestProcessLogin(t *testing.T) {
 				},
 			},
 		}, nil)
-		mockUsers.EXPECT().ProcessLogin(ctx, gomock.Any()).Return(nil, errors.New("user error"))
+		mockUsers.EXPECT().CreateUser(ctx, gomock.Any()).Return(nil, errors.New("user error"))
 
-		res, err := authInteractor.ProcessLogin(ctx, req)
+		res, err := auth.ProcessAuthToken(ctx, inp)
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
@@ -253,9 +293,9 @@ func TestSecurityImageOperations(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	ctrl := gomock.NewController(t)
 
-	mockUsers := mock.NewMockUserPort(ctrl)
+	mockUsers := mock.NewMockUsersPort(ctrl)
 
-	authInteractor := auth.NewAuth(
+	auth := auth.NewAuth(
 		&auth.Config{},
 		ts.TestLogger(),
 		nil, // notification not needed
@@ -265,24 +305,32 @@ func TestSecurityImageOperations(t *testing.T) {
 	)
 
 	t.Run("save security image", func(t *testing.T) {
-		req := &port.SaveSecurityImageRequest{Email: "test@example.com", Image: "image.jpg"}
-		expectedResponse := &port.SaveSecurityImageResponse{Email: "test@example.com"}
+		inp := &gateway.SaveSecurityImageInput{Email: "test@example.com", SecurityImage: "image.jpg"}
 
-		mockUsers.EXPECT().SaveSecurityImage(ctx, req).Return(expectedResponse, nil)
+		mockUsers.EXPECT().SaveSecurityImage(ctx, &users.SaveSecurityImageRequest{
+			Email:         inp.Email,
+			SecurityImage: inp.SecurityImage,
+		}).Return(&users.SaveSecurityImageResponse{
+			Email: inp.Email,
+		}, nil)
 
-		res, err := authInteractor.SaveSecurityImage(ctx, req)
+		pld, err := auth.SaveSecurityImage(ctx, inp)
 		assert.NoError(t, err)
-		assert.Equal(t, expectedResponse, res)
+		assert.Equal(t, inp.Email, pld.Email)
 	})
 
 	t.Run("get security image", func(t *testing.T) {
-		req := &port.GetSecurityImageRequest{Email: "test@example.com"}
-		expectedResponse := &port.GetSecurityImageResponse{Image: "image.jpg"}
+		inp := &gateway.GetSecurityImageInput{Email: "test@example.com"}
 
-		mockUsers.EXPECT().GetSecurityImage(ctx, req).Return(expectedResponse, nil)
+		mockUsers.EXPECT().GetSecurityImage(ctx, &users.GetSecurityImageRequest{
+			Email: inp.Email,
+		}).Return(&users.GetSecurityImageResponse{
+			Email:         inp.Email,
+			SecurityImage: "image.jpg",
+		}, nil)
 
-		res, err := authInteractor.GetSecurityImage(ctx, req)
+		pld, err := auth.GetSecurityImage(ctx, inp)
 		assert.NoError(t, err)
-		assert.Equal(t, expectedResponse, res)
+		assert.Equal(t, "image.jpg", pld.SecurityImage)
 	})
 }

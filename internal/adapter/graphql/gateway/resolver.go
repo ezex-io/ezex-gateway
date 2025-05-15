@@ -1,4 +1,4 @@
-package gen
+package gateway
 
 // This file will not be regenerated automatically.
 //

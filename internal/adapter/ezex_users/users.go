@@ -29,8 +29,8 @@ func New(cfg *Config) (*Users, error) {
 	}, nil
 }
 
-func (u *Users) Close() error {
-	return u.conn.Close()
+func (u *Users) Close() {
+	_ = u.conn.Close()
 }
 
 func (u *Users) CreateUser(ctx context.Context, req *users.CreateUserRequest) (

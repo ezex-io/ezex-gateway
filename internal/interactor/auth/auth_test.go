@@ -12,6 +12,7 @@ import (
 	"github.com/ezex-io/ezex-gateway/internal/port"
 	"github.com/ezex-io/ezex-proto/go/notification"
 	"github.com/ezex-io/ezex-proto/go/users"
+	"github.com/ezex-io/gopkg/logger"
 	"github.com/ezex-io/gopkg/testsuite"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -19,7 +20,6 @@ import (
 
 func TestSendConfirmationCode(t *testing.T) {
 	ctx := t.Context()
-	ts := testsuite.NewTestSuite(t)
 	ctrl := gomock.NewController(t)
 
 	mockNotification := mock.NewMockNotificationPort(ctrl)
@@ -35,7 +35,7 @@ func TestSendConfirmationCode(t *testing.T) {
 
 	authInteractor := auth.NewAuth(
 		cfg,
-		ts.TestLogger(),
+		logger.NewSlog(nil),
 		mockNotification,
 		mockRedis,
 		mockAuth,
@@ -123,7 +123,7 @@ func TestVerifyConfirmationCode(t *testing.T) {
 
 	authInteractor := auth.NewAuth(
 		&auth.Config{},
-		ts.TestLogger(),
+		logger.NewSlog(nil),
 		nil, // notification not needed
 		mockRedis,
 		nil, // authenticator not needed
@@ -187,7 +187,6 @@ func TestVerifyConfirmationCode(t *testing.T) {
 
 func TestProcessAuthToken(t *testing.T) {
 	ctx := t.Context()
-	ts := testsuite.NewTestSuite(t)
 	ctrl := gomock.NewController(t)
 
 	mockAuth := mock.NewMockAuthenticatorPort(ctrl)
@@ -195,7 +194,7 @@ func TestProcessAuthToken(t *testing.T) {
 
 	auth := auth.NewAuth(
 		&auth.Config{},
-		ts.TestLogger(),
+		logger.NewSlog(nil),
 		nil, // notification not needed
 		nil, // redis not needed
 		mockAuth,
@@ -290,14 +289,13 @@ func TestProcessAuthToken(t *testing.T) {
 
 func TestSecurityImageOperations(t *testing.T) {
 	ctx := t.Context()
-	ts := testsuite.NewTestSuite(t)
 	ctrl := gomock.NewController(t)
 
 	mockUsers := mock.NewMockUsersPort(ctrl)
 
 	auth := auth.NewAuth(
 		&auth.Config{},
-		ts.TestLogger(),
+		logger.NewSlog(nil),
 		nil, // notification not needed
 		nil, // redis not needed
 		nil, // authenticator not needed

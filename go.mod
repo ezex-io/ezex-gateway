@@ -13,11 +13,11 @@ require (
 	github.com/99designs/gqlgen v0.17.73
 	github.com/ezex-io/ezex-proto/go/notification v0.0.0-20250514161631-d4a0f7e670ab
 	github.com/ezex-io/ezex-proto/go/users v0.0.0-20250514161631-d4a0f7e670ab
-	github.com/ezex-io/gopkg/env v0.0.0-20250513173018-ef5b6cf3b0e5
-	github.com/ezex-io/gopkg/errors v0.1.0
-	github.com/ezex-io/gopkg/logger v0.1.2
-	github.com/ezex-io/gopkg/middleware/http-mdl v0.1.0
-	github.com/ezex-io/gopkg/testsuite v0.0.0-20250513173018-ef5b6cf3b0e5
+	github.com/ezex-io/gopkg/env v0.0.0-20250516110026-cbaeced8e963
+	github.com/ezex-io/gopkg/logger v0.0.0-20250516110026-cbaeced8e963
+	github.com/ezex-io/gopkg/middleware/http-mdl v0.0.0-20250516110026-cbaeced8e963
+	github.com/ezex-io/gopkg/testsuite v0.0.0-20250516110026-cbaeced8e963
+	github.com/ezex-io/gopkg/utils v0.0.0-20250516110026-cbaeced8e963
 	github.com/redis/go-redis/v9 v9.8.0
 	github.com/stretchr/testify v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.27

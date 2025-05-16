@@ -33,8 +33,8 @@ func New(cfg *Config) (*Adapter, error) {
 	return &Adapter{rdb: rdb}, nil
 }
 
-func (a *Adapter) Close() error {
-	return a.rdb.Close()
+func (a *Adapter) Close() {
+	_ = a.rdb.Close()
 }
 
 func (a *Adapter) Set(ctx context.Context, key string, value string, opts ...port.CacheOption) error {

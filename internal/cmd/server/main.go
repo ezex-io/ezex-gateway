@@ -5,8 +5,6 @@ import (
 	"flag"
 	"log/slog"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_notification"
 	"github.com/ezex-io/ezex-gateway/internal/adapter/ezex_users"
@@ -18,6 +16,7 @@ import (
 	"github.com/ezex-io/gopkg/env"
 	"github.com/ezex-io/gopkg/logger"
 	mdl "github.com/ezex-io/gopkg/middleware/http-mdl"
+	"github.com/ezex-io/gopkg/utils"
 )
 
 func main() {
@@ -44,7 +43,8 @@ func main() {
 	}
 	logging.Info("initialized redis adapter")
 
-	authenticatorPort, err := firebase.New(context.Background(), cfg.Firebase)
+	ctx := context.Background()
+	authenticatorPort, err := firebase.New(ctx, cfg.Firebase)
 	if err != nil {
 		logging.Fatal(err.Error())
 	}
@@ -65,33 +65,20 @@ func main() {
 
 	resolver := resolver.NewResolver(authInteractor)
 
-	gql := graphql.New(cfg.Graphql, resolver, logging, mdl.Recover())
+	gql := graphql.New(cfg.Graphql, logging, resolver, mdl.Recover())
 
 	gql.Start()
-	logging.Info("graphql server started", "addr", cfg.Graphql.Address)
 
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+	utils.TrapSignal(func() {
+		logging.Info("Exiting...")
 
-	select {
-	case <-interrupt:
-		err = gql.Stop(context.Background())
-		if err != nil {
-			logging.Fatal(err.Error())
-		}
+		gql.Stop(ctx)
 
-		err = redisPort.Close()
-		if err != nil {
-			logging.Fatal(err.Error())
-		}
+		redisPort.Close()
+		notificationPort.Close()
+		userPort.Close()
+	})
 
-		err = notificationPort.Close()
-		if err != nil {
-			logging.Fatal(err.Error())
-		}
-
-		logging.Warn("service interrupted")
-	case err := <-gql.Notify():
-		logging.Error("graphql server got error", "err", err)
-	}
+	// run forever
+	select {}
 }

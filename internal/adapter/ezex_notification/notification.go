@@ -28,8 +28,8 @@ func New(cfg *Config) (*Notification, error) {
 	}, nil
 }
 
-func (a *Notification) Close() error {
-	return a.conn.Close()
+func (a *Notification) Close() {
+	_ = a.conn.Close()
 }
 
 func (a *Notification) SendTemplatedEmail(ctx context.Context, req *notification.SendTemplatedEmailRequest) (

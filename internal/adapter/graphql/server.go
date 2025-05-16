@@ -3,7 +3,6 @@ package graphql
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -20,11 +19,11 @@ import (
 )
 
 type Server struct {
-	sv    *http.Server
-	errCh chan error
+	server *http.Server
+	logger logger.Logger
 }
 
-func New(cfg *Config, resolver gateway.ResolverRoot, logging logger.Logger,
+func New(cfg *Config, logger logger.Logger, resolver gateway.ResolverRoot,
 	middlewares ...mdl.Middleware,
 ) *Server {
 	mux := http.NewServeMux()
@@ -45,7 +44,7 @@ func New(cfg *Config, resolver gateway.ResolverRoot, logging logger.Logger,
 		Cache: lru.New[string](100),
 	})
 
-	graphSrv.Use(ext.LoggingExt(logging))
+	graphSrv.Use(ext.LoggingExt(logger))
 
 	if cfg.Playground {
 		mux.Handle("/playground", playground.Handler("ezeX playground", "/query"))
@@ -85,26 +84,25 @@ func New(cfg *Config, resolver gateway.ResolverRoot, logging logger.Logger,
 	}
 
 	return &Server{
-		sv:    srv,
-		errCh: make(chan error, 1),
+		server: srv,
+		logger: logger,
 	}
 }
 
 func (s *Server) Start() {
 	go func() {
-		if err := s.sv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			s.errCh <- fmt.Errorf("server error: %w", err)
+		s.logger.Info("GraphQL server start listening", "address", s.server.Addr)
+		if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			s.logger.Debug("error on GraphQL server", "error", err)
 		}
 	}()
 }
 
-func (s *Server) Notify() <-chan error {
-	return s.errCh
-}
+func (s *Server) Stop(ctx context.Context) {
+	if s.server != nil {
+		shutdownCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+		defer cancel()
 
-func (s *Server) Stop(ctx context.Context) error {
-	shutdownCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
-
-	return s.sv.Shutdown(shutdownCtx)
+		_ = s.server.Shutdown(shutdownCtx)
+	}
 }
